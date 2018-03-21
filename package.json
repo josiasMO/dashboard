@@ -13,9 +13,9 @@
     "e2e": "ng e2e",
     "electron": "ng build --prod && electron .",
     "electron-aot": "ng build --prod && electron .",
-    "package-mac": "electron-packager . --platform=darwin --arch=x64",
-    "package-win": "electron-packager .  --platform=win32 --arch=ia32",
-    "package-linux": "electron-packager . --platform=linux --arch=x64"
+    "package-mac": "electron-packager . --platform=darwin --arch=x64 --no-prune",
+    "package-win": "electron-packager . --out ./release --platform=win32 --arch=x64 --version=0.33.3 --app-version=1.0.0",
+    "package-linux": "electron-packager . --platform=linux --arch=x64 --no-prune"
   },
   "private": true,
   "dependencies": {
@@ -31,9 +31,11 @@
     "@angular/router": "^5.2.0",
     "@types/googlemaps": "^3.30.7",
     "core-js": "^2.4.1",
+    "net": "^1.0.2",
     "ngmap": "^1.18.4",
     "ngx-electron": "^1.0.4",
     "rxjs": "^5.5.6",
+    "ttn": "^2.3.1",
     "zone.js": "^0.8.19"
   },
   "devDependencies": {
@@ -42,7 +44,7 @@
     "@angular/language-service": "^5.2.0",
     "@types/jasmine": "~2.8.3",
     "@types/jasminewd2": "~2.0.2",
-    "@types/node": "~6.0.60",
+    "@types/node": "^6.0.102",
     "codelyzer": "^4.0.1",
     "electron": "^1.8.3",
     "electron-packager": "^11.1.0",
@@ -53,6 +55,7 @@
     "karma-coverage-istanbul-reporter": "^1.2.1",
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "mqtt": "^2.16.0",
     "protractor": "~5.1.2",
     "ts-node": "~4.1.0",
     "tslint": "~5.9.1",

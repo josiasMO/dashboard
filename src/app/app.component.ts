@@ -2,14 +2,13 @@ import { Component } from '@angular/core';
 import { ViewChild } from '@angular/core';
 import { } from '@types/googlemaps';
 
-
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
   // title = 'app';
   @ViewChild('gmap') gmapElement: any;
   map: google.maps.Map;
@@ -18,6 +17,8 @@ export class AppComponent {
   longitude: any;
 
   ngOnInit() {
+
+
     var mapProp = {
       center: new google.maps.LatLng(-29.7164666,-53.7170602),
       zoom: 15,

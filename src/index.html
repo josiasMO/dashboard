@@ -8,6 +8,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <script src="http://maps.googleapis.com/maps/api/js"></script>
+  <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+
+  <script>
+    const mqtt = require('mqtt');
+    const dexie = require('dexie');
+
+    var options = {
+      port: 1883,
+      username: "ufsm_lora",
+      password: "ttn-account-v2.ASUiRfuLwBCxz31WhJM0xCkjaMwOKFWQL47C2Xg0H78",
+      keepalive: 60
+    };
+
+    client  = mqtt.connect("mqtt://brazil.thethings.network", options);
+
+    client.on('connect', function () {
+      console.log("Connected");
+      client.subscribe('ufsm_lora/devices/rhf76-052/up');
+    });
+
+    client.on('message', function (topic, message) {
+      // message is Buffer
+      var msg= JSON.parse(message.toString());
+      var string_msg = Buffer.from(msg.payload_raw, 'base64').toString()
+      console.log(string_msg);
+      storeDB(string_msg);
+
+    });
+
+    function storeDB(receivedValue) {
+      var db = new Dexie("rhf76052_values");
+      db.version(1).stores({
+        values: "++id,type,value"
+      });
+
+      db.values.add({type: "Potência", value: receivedValue}).then(function() {
+        return db.values.toArray();
+      }).then(function (storedValues) {
+        console.log("Valores" + JSON.stringify(storedValues));
+      }).catch(function (e) {
+        console.log("Error: " + (e.stack || e));
+      });
+
+      //
+      // Manipulate and Query Database
+      //
+//      db.friends.add({name: "Josephine "+value, age: 21}).then(function() {
+//        return db.friends.where("age").below(25).toArray();
+//      }).then(function (youngFriends) {
+//        console.log("My young friends: " + JSON.stringify(youngFriends));
+//      }).catch(function (e) {
+//        console.log("Error: " + (e.stack || e));
+//      });
+    }
+  </script>
 </head>
 <body>
   <app-root></app-root>

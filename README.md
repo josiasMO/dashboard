@@ -1,4 +1,4 @@
-# Energy Dashboard
+# Lora Dashboard
 
 ##Dashboard application using Electron, Angular 5 and Bootstrap. 
 ![alt text](https://raw.githubusercontent.com/josiasMO/dashboard/master/src/assets/img/screenshot.png)

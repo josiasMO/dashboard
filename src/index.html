@@ -10,7 +10,12 @@
   <script src="http://maps.googleapis.com/maps/api/js"></script>
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 
+  <link href="https://fonts.googleapis.com/css?family=Allan" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
   <script>
+    console.log("started");
     const mqtt = require('mqtt');
     const dexie = require('dexie');
 
@@ -31,7 +36,8 @@
     client.on('message', function (topic, message) {
       // message is Buffer
       var msg= JSON.parse(message.toString());
-      var string_msg = Buffer.from(msg.payload_raw, 'base64').toString()
+      console.log(msg);
+      var string_msg = Buffer.from(msg.payload_raw, 'base64').toString();
       console.log(string_msg);
       storeDB(string_msg);
 

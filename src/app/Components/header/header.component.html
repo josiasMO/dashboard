@@ -1,5 +1,29 @@
-<div ng-class="header">
-  <h1>{{title}}</h1>
-  <button (click)="onClickMe()">Click me!</button>
-  {{clickMessage}}
-</div>
+<ng-container>
+  <mat-toolbar [ngClass]="'header'">
+    <button mat-button  [ngClass]="'menuButton'" (click)="sidenav.toggle()">
+      <mat-icon style="vertical-align: middle">view_headline</mat-icon>
+      Menu</button>
+    <a [ngClass]="'headerText'">{{title}}</a>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="menu">
+
+    <mat-sidenav #sidenav mode="side" opened="false" [ngClass]="'sidenav'" [fixedInViewport]=false>
+      <p><button mat-button [ngClass]="'sidenavItemSettings'" (click)="clickedButton('Configurações')">
+        Configurações  <mat-icon style="vertical-align: middle">settings</mat-icon></button></p>
+      <p><button mat-button [ngClass]="'sidenavItemLora'" (click)="clickedButton('Lora')">
+        Lora  <mat-icon style="vertical-align: middle">signal_wifi_4_bar</mat-icon></button></p>
+      <p><button mat-button [ngClass]="'sidenavItemMaps'" (click)="clickedButton('Mapa')">
+        Mapa  <mat-icon style="vertical-align: middle">map</mat-icon></button></p>
+
+    </mat-sidenav>
+  </mat-sidenav-container>
+
+  <mat-toolbar [ngClass]="'footer'">
+    <a>Dashboard Lora -  </a>
+    <img src="assets/img/github.svg" style="width: 15px; height: 15px">
+    <a>  -  </a>
+    <a href="https://github.com/josiasMO/dashboard">Acesso ao GitHub</a>
+  </mat-toolbar>
+</ng-container>
+

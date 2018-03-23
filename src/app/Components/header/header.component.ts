@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import {FormBuilder, FormGroup} from '@angular/forms';
 
 import Dexie from 'dexie';
 
@@ -31,6 +32,10 @@ class ValuesDatabase extends Dexie {
 
 export class HeaderComponent implements OnInit {
 
+
+  clickedButton(msg){
+    alert("Clicked "+ msg);
+  }
   @Input() title: string;
 
   clickMessage = '';
@@ -75,7 +80,7 @@ export class HeaderComponent implements OnInit {
   }
 
 
-  constructor() { }
+  // constructor() { }
 
   ngOnInit() {
   }

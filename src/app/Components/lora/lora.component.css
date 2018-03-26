@@ -1,0 +1,25 @@
+.lora{
+  top: 50px;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  position: absolute;
+  background-color: white;
+}
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  font-size: 10px;
+  white-space: unset !important;
+}
+
+.mat-table {
+  overflow: auto;
+  /*max-height: 500px;*/
+}
+
+.mat-header-cell.mat-sort-header-sorted {
+  color: black;
+}

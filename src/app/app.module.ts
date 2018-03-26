@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Routes, RouterModule } from '@angular/router';
 import { NgModule} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSidenavModule,
@@ -11,20 +12,34 @@ import { MatSidenavModule,
   MatCardModule,
   MatFormFieldModule,
   MatInputModule,
-  MatTooltipModule } from '@angular/material';
+  MatTooltipModule,
+  MatTableModule,
+  MatSortModule} from '@angular/material';
+
+import { FlexLayoutModule } from '@angular/flex-layout';
+import {CdkTableModule} from '@angular/cdk/table';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './Components/header/header.component';
+import { MapComponent } from './Components/map/map.component';
+import { LoraComponent } from './Components/lora/lora.component';
+import { AppRoutingModule } from './app-routing/app-routing.module';
+import { SettingsComponent } from './Components/settings/settings.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent
+    HeaderComponent,
+    MapComponent,
+    LoraComponent,
+    SettingsComponent
+
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    RouterModule,
     FormsModule,
     ReactiveFormsModule,
     MatSidenavModule,
@@ -36,7 +51,12 @@ import { HeaderComponent } from './Components/header/header.component';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatTableModule,
+    MatSortModule,
+    AppRoutingModule,
+    FlexLayoutModule,
+    CdkTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

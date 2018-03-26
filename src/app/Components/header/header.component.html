@@ -9,11 +9,12 @@
   <mat-sidenav-container class="menu">
 
     <mat-sidenav #sidenav mode="side" opened="false" [ngClass]="'sidenav'" [fixedInViewport]=false>
-      <p><button mat-button [ngClass]="'sidenavItemSettings'" (click)="clickedButton('Configurações')">
+
+      <p><button mat-button routerLink="settings"   [ngClass]="'sidenavItemSettings'">
         Configurações  <mat-icon style="vertical-align: middle">settings</mat-icon></button></p>
-      <p><button mat-button [ngClass]="'sidenavItemLora'" (click)="clickedButton('Lora')">
+      <p><button mat-button routerLink="" [ngClass]="'sidenavItemLora'">
         Lora  <mat-icon style="vertical-align: middle">signal_wifi_4_bar</mat-icon></button></p>
-      <p><button mat-button [ngClass]="'sidenavItemMaps'" (click)="clickedButton('Mapa')">
+      <p><button mat-button routerLink="map"  [ngClass]="'sidenavItemMaps'">
         Mapa  <mat-icon style="vertical-align: middle">map</mat-icon></button></p>
 
     </mat-sidenav>

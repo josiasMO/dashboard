@@ -29,15 +29,39 @@
   text-align: center;
 }
 
-
 .menuButton{
   vertical-align: middle;
   text-align: center;
   width: 150px;
   background: #207cca;
   font-family: 'Raleway', Helvetica, Arial, sans-serif;
-  font-size: 1.5em;
+  font-size: 1em;
   color: white;
+}
+
+@media only screen and (max-width: 320px) {
+
+  .headerText{
+    width: 100%;
+    color: white;
+    /*padding-left: 200px;*/
+    font-family: 'Allan', Helvetica, Arial, sans-serif;
+    font-size: 2em;
+    /*font-style: italic;*/
+    /*font-weight: bold;*/
+    text-rendering: optimizeLegibility;
+    text-align: center;
+  }
+  .menuButton{
+    vertical-align: middle;
+    text-align: center;
+    width: 150px;
+    background: #207cca;
+    font-family: 'Raleway', Helvetica, Arial, sans-serif;
+    font-size: 0.8em;
+    color: white;
+  }
+
 }
 
 .menu {

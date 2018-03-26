@@ -21,8 +21,11 @@
 
     var options = {
       port: 1883,
-      username: "ufsm_lora",
-      password: "ttn-account-v2.ASUiRfuLwBCxz31WhJM0xCkjaMwOKFWQL47C2Xg0H78",
+//      username: "ufsm_lora",
+//      password: "ttn-account-v2.ASUiRfuLwBCxz31WhJM0xCkjaMwOKFWQL47C2Xg0H78",
+      username: "bufsm",
+      password: "ttn-account-v2.xWQUWuF67urQXZI7HBRM1Rr0cYqXp4EYeXOg6blnzxM",
+
       keepalive: 60
     };
 
@@ -30,29 +33,42 @@
 
     client.on('connect', function () {
       console.log("Connected");
-      client.subscribe('ufsm_lora/devices/rhf76-052/up');
+      client.subscribe('bufsm/devices/bufsm_01/up');
     });
 
     client.on('message', function (topic, message) {
       // message is Buffer
       var msg= JSON.parse(message.toString());
       console.log(msg);
-      var string_msg = Buffer.from(msg.payload_raw, 'base64').toString();
-      console.log(string_msg);
-      storeDB(string_msg);
+      storeDB(msg);
+//      var string_msg = Buffer.from(msg.payload_raw, 'base64').toString();
+//      console.log(string_msg);
+//      storeDB(string_msg);
 
     });
 
-    function storeDB(receivedValue) {
-      var db = new Dexie("rhf76052_values");
+    function storeDB(msg) {
+      var db = new Dexie("bufsm");
       db.version(1).stores({
-        values: "++id,type,value"
+        values: "++id, counter, payload_raw, airtime, coding_rate, data_rate, frequency, timestamp," +
+        "gtw_id, gtw_channel, gtw_rssi, gtw_snr"
       });
 
-      db.values.add({type: "Potência", value: receivedValue}).then(function() {
+      db.values.add({counter: msg.counter,
+        payload_raw: msg.payload_raw,
+        airtime: msg.metadata.airtime,
+        coding_rate: msg.metadata.coding_rate,
+        data_rate: msg.metadata.data_rate,
+        frequency: msg.metadata.frequency,
+        timestamp: msg.metadata.time,
+        gtw_id: msg.metadata.gateways[0].gtw_id,
+        gtw_channel: msg.metadata.gateways[0].channel,
+        gtw_rssi: msg.metadata.gateways[0].rssi,
+        gtw_snr: msg.metadata.gateways[0].snr
+      }).then(function() {
         return db.values.toArray();
       }).then(function (storedValues) {
-        console.log("Valores" + JSON.stringify(storedValues));
+        console.log("Valor inserido");
       }).catch(function (e) {
         console.log("Error: " + (e.stack || e));
       });

@@ -1,0 +1,59 @@
+<div [ngClass]="'lora'" ng-if="loadTable">
+
+  <div class="example-container mat-elevation-z8">
+    <mat-table #table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> id </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.id}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="counter">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Counter</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.counter}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="payload_raw">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Payload Raw</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.payload_raw}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="airtime">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Airtime</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.airtime}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="coding_rate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Coding Rate</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.coding_rate}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="data_rate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Data Rate</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.data_rate}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="frequency">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Frequency</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.frequency}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="timestamp">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Timestamp</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.timestamp}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="gtw_id">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>GTW id</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.gtw_id}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="gtw_channel">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>GTW channel</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.gtw_channel}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="gtw_rssi">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>GTW rssi</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.gtw_rssi}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="gtw_snr">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>GTW SNR</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.gtw_snr}} </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+
+
+</div>

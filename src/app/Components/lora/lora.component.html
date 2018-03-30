@@ -1,4 +1,6 @@
 <div [ngClass]="'lora'" ng-if="loadTable">
+  <button mat-button  [ngClass]="'menuButton'" (click)="downloadCSV()" style="float: right">
+    Download CSV</button>
 
   <div class="example-container mat-elevation-z8">
     <mat-table #table [dataSource]="dataSource" matSort>

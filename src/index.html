@@ -9,7 +9,6 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <script src="http://maps.googleapis.com/maps/api/js"></script>
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
-
   <link href="https://fonts.googleapis.com/css?family=Allan" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -50,12 +49,13 @@
     function storeDB(msg) {
       var db = new Dexie("bufsm");
       db.version(1).stores({
-        values: "++id, counter, payload_raw, airtime, coding_rate, data_rate, frequency, timestamp," +
+        values: "++id, counter, payload_raw, port, airtime, coding_rate, data_rate, frequency, timestamp," +
         "gtw_id, gtw_channel, gtw_rssi, gtw_snr"
       });
 
       db.values.add({counter: msg.counter,
         payload_raw: msg.payload_raw,
+        port: msg.port,
         airtime: msg.metadata.airtime,
         coding_rate: msg.metadata.coding_rate,
         data_rate: msg.metadata.data_rate,

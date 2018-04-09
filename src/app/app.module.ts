@@ -1,8 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Routes, RouterModule } from '@angular/router';
-import { NgModule} from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
+
 import { MatSidenavModule,
   MatCheckboxModule,
   MatToolbarModule,
@@ -14,17 +15,20 @@ import { MatSidenavModule,
   MatInputModule,
   MatTooltipModule,
   MatTableModule,
-  MatSortModule} from '@angular/material';
+  MatSortModule,
+  MatDialogModule,
+  MatListModule } from '@angular/material';
 
-import { FlexLayoutModule } from '@angular/flex-layout';
 import {CdkTableModule} from '@angular/cdk/table';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
-import { AppComponent } from './app.component';
+import { AppComponent , DialogFileComponent } from './app.component';
 import { HeaderComponent } from './Components/header/header.component';
 import { MapComponent } from './Components/map/map.component';
 import { LoraComponent } from './Components/lora/lora.component';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { SettingsComponent } from './Components/settings/settings.component';
+import { ApplicationComponent } from './Components/application/application.component';
 
 
 @NgModule({
@@ -33,7 +37,9 @@ import { SettingsComponent } from './Components/settings/settings.component';
     HeaderComponent,
     MapComponent,
     LoraComponent,
-    SettingsComponent
+    SettingsComponent,
+    ApplicationComponent,
+    DialogFileComponent
 
   ],
   imports: [
@@ -54,10 +60,13 @@ import { SettingsComponent } from './Components/settings/settings.component';
     MatTooltipModule,
     MatTableModule,
     MatSortModule,
+    MatDialogModule,
+    MatListModule,
     AppRoutingModule,
-    FlexLayoutModule,
+    NgbModule.forRoot(),
     CdkTableModule
   ],
+  entryComponents: [AppComponent, DialogFileComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

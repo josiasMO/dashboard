@@ -1,6 +1,30 @@
 import { Component } from '@angular/core';
-import { ViewChild } from '@angular/core';
-import { } from '@types/googlemaps';
+import { MatDialog } from '@angular/material';
+import { Validators, FormControl, FormGroup} from '@angular/forms';
+
+import Dexie from 'dexie';
+
+declare function connectMQTT(appName, port, key): any;
+
+export interface Values {
+  id?: number;
+  appName?: string;
+  port?: number;
+  appKey?: string;
+  devices?: any;
+}
+
+class ApplicationsDatabase extends Dexie {
+  values: Dexie.Table<Values, number>;
+
+  constructor() {
+    super('applications');
+    this.version(1).stores({
+      values: '++id, appName, port, appKey, devices'
+    });
+  }
+}
+
 
 @Component({
   selector: 'app-root',
@@ -8,10 +32,118 @@ import { } from '@types/googlemaps';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  ready = false;
+  constructor(public dialog: MatDialog) {
 
-  // title = 'app';
 
-  // ngOnInit() {
+    const dialogRef = this.dialog.open(DialogFileComponent, {
+      height: '450px',
+      width: '400px',
+      position: {
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log(`Dialog result: ${result}`);
+      this.ready = true;
+    });
+
+  }
+
+
+}
+
+@Component({
+  selector: 'dialog-file',
+  templateUrl: 'dialog-file.html',
+  styleUrls: ['./app.component.css']
+})
+export class DialogFileComponent {
+
+  application: FormGroup;
+
+  validApps = false;
+  goBack = false;
+  values = [];
+
+  constructor() {
+    this.application = new FormGroup({
+      appName: new FormControl('', Validators.required),
+      port: new FormControl('', Validators.required),
+      appKey: new FormControl('', Validators.required)
+    });
+
+   this.loadDB();
+
+
+  }
+  loadDB() {
+    const db = new ApplicationsDatabase();
+
+    db.transaction('rw', db.values, async() => {
+      this.values = await db.values.toArray();
+      console.log(JSON.stringify(this.values));
+      if (this.values.length > 0) {
+        this.validApps = true;
+        this.goBack = true;
+      }
+      else{
+        alert('Nenhuma Aplicação Cadastrada');
+      }
+
+
+    }).catch(e => {
+      console.log(e.stack || e);
+    });
+
+  }
+  addApp() {
+    this.validApps = false;
+  }
+
+  save() {
+    const db = new ApplicationsDatabase();
+
+    db.transaction('rw', db.values, async() => {
+      const storedValues = await db.values.toArray();
+      console.log(storedValues);
+      console.log(storedValues.filter(x => x.appName == this.application.value.appName));
+
+      if ((storedValues.filter(x => x.appName == this.application.value.appName)).length == 0) {
+        console.log('Adding app');
+        const id = await db.values.add({
+          appName: this.application.value.appName,
+          port: this.application.value.port,
+          appKey: this.application.value.appKey,
+          devices: []});
+        alert('Applicação Adicionada: ' + this.application.value.appName);
+        this.loadDB();
+      } else {
+        alert('Erro! Aplicação ' + this.application.value.appName + ' já existente!!!');
+      }
+    }).catch(e => {
+      console.log(e.stack || e);
+    });
+  }
+  itemSelected(appName, port, key) {
+    connectMQTT(appName, port, key);
+    // alert('Aplicação Selecionada: ' + appName);
+  }
+
+
+}
+
+  //
+  // Manipulate and Query Database
+  //
+//      db.friends.add({name: "Josephine "+value, age: 21}).then(function() {
+//        return db.friends.where("age").below(25).toArray();
+//      }).then(function (youngFriends) {
+//        console.log("My young friends: " + JSON.stringify(youngFriends));
+//      }).catch(function (e) {
+//        console.log("Error: " + (e.stack || e));
+//      });
+
 
 
     // var mapProp = {
@@ -38,4 +170,4 @@ export class AppComponent {
   //   });
   // }
 
-}
+

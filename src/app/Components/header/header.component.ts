@@ -32,6 +32,7 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 
 export class HeaderComponent implements OnInit {
 
+  opened;
 
   @Input() title: string;
 

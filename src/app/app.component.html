@@ -1,6 +1,10 @@
 <div class="mainpage">
-  <app-header title="Lora DashBoard"></app-header>
 
-  <router-outlet></router-outlet>
+  <div class="mat-app-background basic-container" *ngIf="!ready"></div>
+
+
+  <app-header *ngIf="ready"> title="Lora DashBoard"></app-header>
+
+  <router-outlet *ngIf="ready"></router-outlet>
 
 </div>

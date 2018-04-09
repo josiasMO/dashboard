@@ -13,77 +13,121 @@
   <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+  <script src= "../src/app/mqtt_connection.js"></script>
   <script>
-    console.log("started");
-    const mqtt = require('mqtt');
-    const dexie = require('dexie');
-
-    var options = {
-      port: 1883,
+      console.log(process.cwd(), __dirname);
+//    const mqtt = require('mqtt');
+//    const dexie = require('dexie');
+//    var options = {
+//      port: 1883,
 //      username: "ufsm_lora",
 //      password: "ttn-account-v2.ASUiRfuLwBCxz31WhJM0xCkjaMwOKFWQL47C2Xg0H78",
-      username: "bufsm",
-      password: "ttn-account-v2.xWQUWuF67urQXZI7HBRM1Rr0cYqXp4EYeXOg6blnzxM",
-
-      keepalive: 60
-    };
-
-    client  = mqtt.connect("mqtt://brazil.thethings.network", options);
-
-    client.on('connect', function () {
-      console.log("Connected");
-      client.subscribe('bufsm/devices/bufsm_01/up');
-    });
-
-    client.on('message', function (topic, message) {
-      // message is Buffer
-      var msg= JSON.parse(message.toString());
-      console.log(msg);
-      storeDB(msg);
-//      var string_msg = Buffer.from(msg.payload_raw, 'base64').toString();
-//      console.log(string_msg);
-//      storeDB(string_msg);
-
-    });
-
-    function storeDB(msg) {
-      var db = new Dexie("bufsm");
-      db.version(1).stores({
-        values: "++id, counter, payload_raw, port, airtime, coding_rate, data_rate, frequency, timestamp," +
-        "gtw_id, gtw_channel, gtw_rssi, gtw_snr"
-      });
-
-      db.values.add({counter: msg.counter,
-        payload_raw: msg.payload_raw,
-        port: msg.port,
-        airtime: msg.metadata.airtime,
-        coding_rate: msg.metadata.coding_rate,
-        data_rate: msg.metadata.data_rate,
-        frequency: msg.metadata.frequency,
-        timestamp: msg.metadata.time,
-        gtw_id: msg.metadata.gateways[0].gtw_id,
-        gtw_channel: msg.metadata.gateways[0].channel,
-        gtw_rssi: msg.metadata.gateways[0].rssi,
-        gtw_snr: msg.metadata.gateways[0].snr
-      }).then(function() {
-        return db.values.toArray();
-      }).then(function (storedValues) {
-        console.log("Valor inserido");
-      }).catch(function (e) {
-        console.log("Error: " + (e.stack || e));
-      });
-
-      //
-      // Manipulate and Query Database
-      //
-//      db.friends.add({name: "Josephine "+value, age: 21}).then(function() {
-//        return db.friends.where("age").below(25).toArray();
-//      }).then(function (youngFriends) {
-//        console.log("My young friends: " + JSON.stringify(youngFriends));
+////      username: "bufsm",
+////      password: "ttn-account-v2.xWQUWuF67urQXZI7HBRM1Rr0cYqXp4EYeXOg6blnzxM",
+//
+//      keepalive: 60
+//    };
+//    var client;
+//
+//    connect();
+//    listen();
+//
+//
+//    function connect() {
+//
+//      client  = mqtt.connect("mqtt://brazil.thethings.network", options);
+//
+//      client.on('connect', function () {
+//        console.log("Connected");
+//        client.subscribe('ufsm_lora/devices/+/up');
+//      });
+//
+//    }
+//
+//    function listen() {
+//      client.on('message', function (topic, message) {
+//      // message is Buffer
+//      var msg= JSON.parse(message.toString());
+//      console.log(msg);
+////      storeDB(msg);
+//////      var string_msg = Buffer.from(msg.payload_raw, 'base64').toString();
+//////      console.log(string_msg);
+//////      storeDB(string_msg);
+//
+//     });
+//    }
+//
+//
+////    console.log("started");
+////    const mqtt = require('mqtt');
+////    const dexie = require('dexie');
+////
+////    var options = {
+////      port: 1883,
+//////      username: "ufsm_lora",
+//////      password: "ttn-account-v2.ASUiRfuLwBCxz31WhJM0xCkjaMwOKFWQL47C2Xg0H78",
+////      username: "bufsm",
+////      password: "ttn-account-v2.xWQUWuF67urQXZI7HBRM1Rr0cYqXp4EYeXOg6blnzxM",
+////
+////      keepalive: 60
+////    };
+////
+////    client  = mqtt.connect("mqtt://brazil.thethings.network", options);
+////
+////    client.on('connect', function () {
+////      console.log("Connected");
+////      client.subscribe('bufsm/devices/bufsm_01/up');
+////    });
+////
+////    client.on('message', function (topic, message) {
+////      // message is Buffer
+////      var msg= JSON.parse(message.toString());
+////      console.log(msg);
+////      storeDB(msg);
+//////      var string_msg = Buffer.from(msg.payload_raw, 'base64').toString();
+//////      console.log(string_msg);
+//////      storeDB(string_msg);
+//
+////    });
+//
+//    function storeDB(msg) {
+//      var db = new Dexie("bufsm");
+//      db.version(1).stores({
+//        values: "++id, counter, payload_raw, port, airtime, coding_rate, data_rate, frequency, timestamp," +
+//        "gtw_id, gtw_channel, gtw_rssi, gtw_snr"
+//      });
+//
+//      db.values.add({counter: msg.counter,
+//        payload_raw: msg.payload_raw,
+//        port: msg.port,
+//        airtime: msg.metadata.airtime,
+//        coding_rate: msg.metadata.coding_rate,
+//        data_rate: msg.metadata.data_rate,
+//        frequency: msg.metadata.frequency,
+//        timestamp: msg.metadata.time,
+//        gtw_id: msg.metadata.gateways[0].gtw_id,
+//        gtw_channel: msg.metadata.gateways[0].channel,
+//        gtw_rssi: msg.metadata.gateways[0].rssi,
+//        gtw_snr: msg.metadata.gateways[0].snr
+//      }).then(function() {
+//        return db.values.toArray();
+//      }).then(function (storedValues) {
+//        console.log("Valor inserido");
 //      }).catch(function (e) {
 //        console.log("Error: " + (e.stack || e));
 //      });
-    }
+//
+//      //
+//      // Manipulate and Query Database
+//      //
+////      db.friends.add({name: "Josephine "+value, age: 21}).then(function() {
+////        return db.friends.where("age").below(25).toArray();
+////      }).then(function (youngFriends) {
+////        console.log("My young friends: " + JSON.stringify(youngFriends));
+////      }).catch(function (e) {
+////        console.log("Error: " + (e.stack || e));
+////      });
+//    }
   </script>
 </head>
 <body>

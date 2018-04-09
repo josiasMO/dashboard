@@ -1,4 +1,5 @@
 .header {
+  position: fixed;
   width:100%;
   height: 50px;
   background: #6db3f2; /* Old browsers */
@@ -10,10 +11,10 @@
   /*border: 2px solid darkblue;*/
   text-align: center;
   vertical-align: middle;
-  position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  z-index: 2;
 
 }
 
@@ -28,11 +29,14 @@
   text-rendering: optimizeLegibility;
   text-align: center;
 }
-
+.nofocus:focus {
+  outline: none;
+}
 .menuButton{
   vertical-align: middle;
   text-align: center;
   width: 150px;
+  height: 40px;
   background: #207cca;
   font-family: 'Raleway', Helvetica, Arial, sans-serif;
   font-size: 1em;
@@ -64,20 +68,20 @@
 
 }
 
-.menu {
-  position: absolute;
+.sidenav {
+  position: fixed;
   top: 50px;
   bottom: 20px;
-  width: 180px;
   left: 0;
   right: 0;
-}
-
-.sidenav {
-  background-color: #207cca;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #207cca;
+  background-color: #207cca ;
   /*justify-content: center;*/
   width: 180px;
+  z-index: 2;
 }
 .sidenavItemSettings{
    vertical-align: middle;
@@ -134,6 +138,7 @@
 
 
 .footer {
+  position: fixed;
   background: #6db3f2; /* Old browsers */
   background: -moz-linear-gradient(-45deg, #6db3f2 0%, #54a3ee 50%, #54a3ee 51%, #1e69de 100%); /* FF3.6-15 */
   background: -webkit-linear-gradient(-45deg, #6db3f2 0%,#54a3ee 50%,#54a3ee 51%,#1e69de 100%); /* Chrome10-25,Safari5.1-6 */
@@ -142,7 +147,6 @@
   font-family: 'Raleway', Helvetica, Arial, sans-serif;
   width: 100%;
   height: 20px;
-  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
@@ -152,6 +156,7 @@
   align-items: center;
   justify-content: center;
   color: white;
+  z-index: 2;
 }
 
 body{

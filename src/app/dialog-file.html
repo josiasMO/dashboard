@@ -1,0 +1,84 @@
+
+<!--<h2 mat-dialog-title>Selecionar Aplicação</h2>-->
+<div *ngIf="validApps">
+  <div class="row">
+    <div class="col-md-12">
+      <mat-dialog-content>
+        <div class="row header nofocus">
+          <a class="headerText nofocus">Lora Dashboard</a>
+        </div>
+        <h4 style="margin-top: 20px">Selecionar Aplicação:</h4>
+        <mat-nav-list>
+
+          <mat-list-item *ngFor="let value of values" class="nofocus">
+            <button matLine mat-button mat-dialog-close  [ngClass]="'appItem'"
+                    (click)="itemSelected(value.appName, value.port, value.appKey)">{{ value.appName }}</button>
+          </mat-list-item>
+
+        </mat-nav-list>
+
+      </mat-dialog-content>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 offset-3">
+      <mat-dialog-actions [ngClass]="'actions'">
+        <button mat-button (click)="addApp()" class="actionButton nofocus">Adicionar Aplicação</button>
+      </mat-dialog-actions>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!validApps">
+  <div class="row">
+    <div class="col-md-12">
+      <mat-dialog-content>
+        <div class="row header nofocus">
+          <a class="headerText nofocus">Lora Dashboard</a>
+        </div>
+        <h4 style="margin-top: 20px">Adicionar Aplicação:</h4>
+
+        <form [formGroup]="application">
+          <div class="form-group ">
+            <label>Application ID</label>
+            <input type="text"
+                   class="form-control"
+                   formControlName="appName"
+                   required>
+          </div>
+          <div class="form-group">
+            <label>Port</label>
+            <input type="number"
+                   class="form-control"
+                   formControlName="port"
+                   required>
+          </div>
+          <div class="form-group">
+            <label>Aplication Key</label>
+            <input type="text"
+                   class="form-control"
+                   formControlName="appKey"
+                   required>
+          </div>
+
+        </form>
+
+      </mat-dialog-content>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 offset-2">
+      <mat-dialog-actions [ngClass]="'actions'">
+        <button mat-button (click)="save()" [disabled]="!application.valid" class="actionButton nofocus">Salvar</button>
+      </mat-dialog-actions>
+    </div>
+    <div class="col-md-4">
+      <mat-dialog-actions [ngClass]="'actions'">
+        <button mat-button (click)="loadDB()" [disabled]="!goBack" class="actionButton nofocus">Voltar</button>
+      </mat-dialog-actions>
+    </div>
+  </div>
+</div>
+

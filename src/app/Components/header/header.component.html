@@ -1,24 +1,27 @@
 <ng-container>
-  <mat-toolbar [ngClass]="'header'">
-    <button mat-button  [ngClass]="'menuButton'" (click)="sidenav.toggle()">
+  <mat-toolbar [ngClass]="'header nofocus'">
+    <button mat-button  [ngClass]="'menuButton nofocus'"  (click)="sidenav.toggle()">
       <mat-icon style="vertical-align: middle">view_headline</mat-icon>
       Menu</button>
     <a [ngClass]="'headerText'">{{title}}</a>
   </mat-toolbar>
 
-  <mat-sidenav-container class="menu">
 
-    <mat-sidenav #sidenav mode="side" opened="false" [ngClass]="'sidenav'" [fixedInViewport]=false>
 
-      <p><button mat-button routerLink="settings"   [ngClass]="'sidenavItemSettings'">
+  <!--<mat-sidenav-container [ngClass]="'menu'">-->
+
+    <mat-sidenav #sidenav mode="side" [(opened)]="opened" [ngClass]="'sidenav nofocus'" [fixedInViewport]=false>
+
+      <p><button mat-button routerLink="settings"   [ngClass]="'sidenavItemSettings nofocus'">
         Configurações  <mat-icon style="vertical-align: middle">settings</mat-icon></button></p>
-      <p><button mat-button routerLink="" [ngClass]="'sidenavItemLora'">
+      <p><button mat-button routerLink="lora" [ngClass]="'sidenavItemLora nofocus'">
         Lora  <mat-icon style="vertical-align: middle">signal_wifi_4_bar</mat-icon></button></p>
-      <p><button mat-button routerLink="map"  [ngClass]="'sidenavItemMaps'">
+      <p><button mat-button routerLink="map"  [ngClass]="'sidenavItemMaps nofocus'">
         Mapa  <mat-icon style="vertical-align: middle">map</mat-icon></button></p>
 
     </mat-sidenav>
-  </mat-sidenav-container>
+    <!--<mat-sidenav-content></mat-sidenav-content>-->
+  <!--</mat-sidenav-container>-->
 
   <mat-toolbar [ngClass]="'footer'">
     <a>Dashboard Lora -  </a>
@@ -26,5 +29,6 @@
     <a>  -  </a>
     <a href="https://github.com/josiasMO/dashboard">Acesso ao GitHub</a>
   </mat-toolbar>
+
 </ng-container>
 

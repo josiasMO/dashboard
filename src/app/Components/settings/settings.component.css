@@ -5,4 +5,11 @@
   right: 0;
   position: absolute;
   background-color: #c3d9ff;
+  z-index: -1;
+}
+.container{
+  top: 50px;
+  bottom: 20px;
+  left: 0;
+  right: 0;
 }

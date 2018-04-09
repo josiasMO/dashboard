@@ -4,10 +4,15 @@ import { RouterModule, Routes } from '@angular/router';
 import { MapComponent } from '../Components/map/map.component';
 import { LoraComponent } from '../Components/lora/lora.component';
 import { SettingsComponent } from '../Components/settings/settings.component';
+import { ApplicationComponent  } from '../Components/application/application.component';
 
 const routes: Routes = [
   {
     path: '',
+    component: ApplicationComponent,
+  },
+  {
+    path: 'lora',
     component: LoraComponent,
   },
   {
@@ -25,7 +30,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes),
-    CommonModule
+    CommonModule,
   ],
   exports: [
     RouterModule

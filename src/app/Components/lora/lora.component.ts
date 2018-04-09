@@ -30,7 +30,7 @@ class ValuesDatabase extends Dexie {
   constructor() {
     super('bufsm');
     this.version(1).stores({
-      values: '++id, counter, payload_raw, port airtime, coding_rate, data_rate, frequency, timestamp,' +
+      values: '++id, counter, payload_raw, port, airtime, coding_rate, data_rate, frequency, timestamp,' +
       'gtw_id, gtw_channel, gtw_rssi, gtw_snr'
     });
   }

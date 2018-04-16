@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   position: absolute;
-  background-color: #c3d9ff;
+  /*background-color: #c3d9ff;*/
   z-index: -1;
 }
 .container{

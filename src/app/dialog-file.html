@@ -12,7 +12,7 @@
 
           <mat-list-item *ngFor="let value of values" class="nofocus">
             <button matLine mat-button mat-dialog-close  [ngClass]="'appItem'"
-                    (click)="itemSelected(value.appName, value.port, value.appKey)">{{ value.appName }}</button>
+                    (click)="itemSelected(value.app_name, value.port, value.app_key)">{{ value.app_name }}</button>
           </mat-list-item>
 
         </mat-nav-list>
@@ -44,7 +44,7 @@
             <label>Application ID</label>
             <input type="text"
                    class="form-control"
-                   formControlName="appName"
+                   formControlName="app_name"
                    required>
           </div>
           <div class="form-group">
@@ -58,7 +58,7 @@
             <label>Aplication Key</label>
             <input type="text"
                    class="form-control"
-                   formControlName="appKey"
+                   formControlName="app_key"
                    required>
           </div>
 

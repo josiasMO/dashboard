@@ -17,7 +17,8 @@ import { MatSidenavModule,
   MatTableModule,
   MatSortModule,
   MatDialogModule,
-  MatListModule } from '@angular/material';
+  MatListModule,
+  MatSelectModule} from '@angular/material';
 
 import {CdkTableModule} from '@angular/cdk/table';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
@@ -29,6 +30,8 @@ import { LoraComponent } from './Components/lora/lora.component';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { SettingsComponent } from './Components/settings/settings.component';
 import { ApplicationComponent } from './Components/application/application.component';
+
+import { SharedataService } from './sharedata.service';
 
 
 @NgModule({
@@ -62,12 +65,13 @@ import { ApplicationComponent } from './Components/application/application.compo
     MatSortModule,
     MatDialogModule,
     MatListModule,
+    MatSelectModule,
     AppRoutingModule,
     NgbModule.forRoot(),
     CdkTableModule
   ],
   entryComponents: [AppComponent, DialogFileComponent],
-  providers: [],
+  providers: [SharedataService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

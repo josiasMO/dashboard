@@ -12,11 +12,11 @@
 
     <mat-sidenav #sidenav mode="side" [(opened)]="opened" [ngClass]="'sidenav nofocus'" [fixedInViewport]=false>
 
-      <p><button mat-button routerLink="settings"   [ngClass]="'sidenavItemSettings nofocus'">
+      <p><button mat-button routerLink="settings" (click)="opened= !opened"  [ngClass]="'sidenavItemSettings nofocus'">
         Configurações  <mat-icon style="vertical-align: middle">settings</mat-icon></button></p>
-      <p><button mat-button routerLink="lora" [ngClass]="'sidenavItemLora nofocus'">
+      <p><button mat-button routerLink="lora" (click)="opened= !opened" [ngClass]="'sidenavItemLora nofocus'">
         Lora  <mat-icon style="vertical-align: middle">signal_wifi_4_bar</mat-icon></button></p>
-      <p><button mat-button routerLink="map"  [ngClass]="'sidenavItemMaps nofocus'">
+      <p><button mat-button routerLink="map" (click)="opened= !opened" [ngClass]="'sidenavItemMaps nofocus'">
         Mapa  <mat-icon style="vertical-align: middle">map</mat-icon></button></p>
 
     </mat-sidenav>

@@ -28,7 +28,7 @@ class ValuesDatabase extends Dexie {
   values: Dexie.Table<Values, number>;
 
   constructor() {
-    super('bufsm');
+    super('bufsm_bufsm_01');
     this.version(1).stores({
       values: '++id, counter, payload_raw, port, airtime, coding_rate, data_rate, frequency, timestamp,' +
       'gtw_id, gtw_channel, gtw_rssi, gtw_snr'
@@ -110,9 +110,6 @@ export class LoraComponent implements OnInit {
 
   }
 
-  ngAfterViewInit() {
-
-  }
 
 
   convertToCSV(objArray) {

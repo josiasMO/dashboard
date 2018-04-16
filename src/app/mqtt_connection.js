@@ -11,12 +11,6 @@ function connectMQTT(application, port, key) {
      port: port,
      username: application,
      password: key,
-     // port: 1883,
-     // username: "ufsm_lora",
-     // password: "ttn-account-v2.ASUiRfuLwBCxz31WhJM0xCkjaMwOKFWQL47C2Xg0H78",
-     // username: "bufsm",
-     // password: "ttn-account-v2.xWQUWuF67urQXZI7HBRM1Rr0cYqXp4EYeXOg6blnzxM",
-
      keepalive: 60
    };
 
@@ -32,73 +26,56 @@ function connectMQTT(application, port, key) {
      var msg= JSON.parse(message.toString());
      console.log(msg);
      storeDB(msg);
-//      var string_msg = Buffer.from(msg.payload_raw, 'base64').toString();
-//      console.log(string_msg);
-//      storeDB(string_msg);
-
    });
 }
 
 function storeDB(msg) {
-  console.log(msg.dev_id);
-  var db = new Dexie('applications');
-  db.version(1).stores({
-      values: '++id, appName, port, appKey, devices'
+  var db_app = new Dexie('applications');
+  db_app.version(1).stores({
+      values: '++id, app_name, port, app_key, devices'
+  });
+
+  db_app.transaction('rw', db_app.values, async() => {
+    var app = await db_app.values.where('app_name').equals(msg.app_id).toArray();
+    console.log(app[0].devices);
+    if (!(app[0].devices.includes(msg.dev_id))) {
+      console.log("Not equal");
+      app[0].devices.push(msg.dev_id);
+      db_app.values.where('app_name').equals(msg.app_id).modify(app[0]);
+    } else {
+      console.log("Equal");
+    }
+  }).catch(e => {
+    console.log(e.stack || e);
+  });
+
+  var db_msg = new Dexie(msg.app_id + '_' + msg.dev_id);
+  db_msg.version(1).stores({
+    values: "++id, counter, payload_raw, port, airtime, coding_rate, data_rate, frequency, timestamp," +
+    "gtw_id, gtw_channel, gtw_rssi, gtw_snr"
   });
 
 
-  // db.transaction('rw', db.values, async() => {
-  //
-  //   var app = await db.values.where('appName').equals(msg.app_id).toArray();
-  //   const result = app.devices.find(x => x.dev_id === msg.dev_id);
-  //   console.log(JSON.stringify(app), result);
-  //
-  //   for(var x in app.devices){
-  //
-  //   }
-  // }).catch(e => {
-  //   console.log(e.stack || e);
-  // });
-
-  // var db = new Dexie(msg.dev_id);
-  // db.version(1).stores({
-  //   values: "++id, counter, payload_raw, port, airtime, coding_rate, data_rate, frequency, timestamp," +
-  //   "gtw_id, gtw_channel, gtw_rssi, gtw_snr"
-  // });
-  //
-  // db.values.add({counter: msg.counter,
-  //   payload_raw: msg.payload_raw,
-  //   port: msg.port,
-  //   airtime: msg.metadata.airtime,
-  //   coding_rate: msg.metadata.coding_rate,
-  //   data_rate: msg.metadata.data_rate,
-  //   frequency: msg.metadata.frequency,
-  //   timestamp: msg.metadata.time,
-  //   gtw_id: msg.metadata.gateways[0].gtw_id,
-  //   gtw_channel: msg.metadata.gateways[0].channel,
-  //   gtw_rssi: msg.metadata.gateways[0].rssi,
-  //   gtw_snr: msg.metadata.gateways[0].snr
-  // }).then(function() {
-  //   return db.values.toArray();
-  // }).then(function (storedValues) {
-  //   console.log("Valor inserido");
-  // }).catch(function (e) {
-  //   console.log("Error: " + (e.stack || e));
-  // });
-
-  //
-  // Manipulate and Query Database
-  //
-//      db.friends.add({name: "Josephine "+value, age: 21}).then(function() {
-//        return db.friends.where("age").below(25).toArray();
-//      }).then(function (youngFriends) {
-//        console.log("My young friends: " + JSON.stringify(youngFriends));
-//      }).catch(function (e) {
-//        console.log("Error: " + (e.stack || e));
-//      });
-}
-
-function addDevice(dev_id) {
-
+  db_msg.values.add({counter: msg.counter,
+    payload_raw:(msg.payload_raw == null)?'':msg.payload_raw,
+    port: (msg.port == null)?'':msg.port,
+    airtime: (msg.metadata.airtime == null)?'':msg.metadata.airtime,
+    coding_rate: (msg.metadata.coding_rate == null)?'':msg.metadata.coding_rate,
+    data_rate: (msg.metadata.data_rate == null)?'':msg.metadata.data_rate,
+    frequency: (msg.metadata.frequency == null)?'':msg.metadata.frequency,
+    timestamp: (msg.metadata.time == null)?'':msg.metadata.time,
+    gtw_id: (msg.metadata.gateways == null)?'':msg.metadata.gateways[0].gtw_id,
+    gtw_channel: (msg.metadata.gateways == null)?'':msg.metadata.gateways[0].channel,
+    gtw_rssi: (msg.metadata.gateways == null)?'':msg.metadata.gateways[0].rssi,
+    gtw_snr: (msg.metadata.gateways == null)?'':msg.metadata.gateways[0].snr
+  }).then(function() {
+    return db_msg.values.toArray();
+  }).then(function () {
+    console.log("Valor inserido");
+  }).catch(function (e) {
+    console.log("Error: " + (e.stack || e));
+  });
 
 }
+
+

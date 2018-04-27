@@ -4,7 +4,8 @@ import { Validators, FormControl, FormGroup} from '@angular/forms';
 import Dexie from 'dexie';
 import { SharedataService } from '../../sharedata.service';
 
-export interface Values {
+//Model of Application database
+export interface Application {
   id?: number;
   app_name?: string;
   port?: number;
@@ -13,7 +14,7 @@ export interface Values {
 }
 
 class ApplicationsDatabase extends Dexie {
-  values: Dexie.Table<Values, number>;
+  values: Dexie.Table<Application, number>;
 
   constructor() {
     super('applications');
@@ -23,6 +24,7 @@ class ApplicationsDatabase extends Dexie {
   }
 }
 
+//Model of Parts database
 export interface Parts {
   id?: number;
   app_name?: string;
@@ -50,77 +52,94 @@ class PartsDatabase extends Dexie {
 
 export class SettingsComponent implements OnInit{
 
-  app;
-  db_app;
   selectedApp: string;
   devices = [];
   packetParts = [];
   dataTypes = ['número', 'string', 'booleano'];
 
+  //variables that control readonly of forms
   deviceSelected = false;
   portSelected = false;
-  lengthSelected = false;
   packetSelected = false;
+  divisionValue;
 
+  //variables that hide/show fields end_bit and/or scale
   booleanPacket = [];
   isString = [];
 
   deviceConfig: FormGroup;
 
-  constructor(private data: SharedataService){
+  constructor(private data: SharedataService) {
 
+    //Creates top form inputs for device_id, port and number of parts
     this.deviceConfig = new FormGroup({
       dev_id: new FormControl('', Validators.required),
       port: new FormControl('', [Validators.min(1), Validators.max(255), Validators.required]),
-      packet_length: new FormControl('', [Validators.required, Validators.min(1)]),
       packet_parts: new FormControl('', [Validators.required, Validators.min(1)])
     });
 
   }
 
   ngOnInit() {
+    //subscribe to service to retrieve app name
     this.data.currentApp.subscribe(selectedApp => this.selectedApp = selectedApp);
     this.loadDevices();
 
   }
 
-
+  //load list of devices from the current application and add them to dropdown menu
   loadDevices() {
-
-    this.db_app = new ApplicationsDatabase();
-
-    this.db_app.transaction('rw', this.db_app.values, async() => {
-      this.app = await this.db_app.values.where('app_name').equals(this.selectedApp).toArray();
-      // console.log(this.app);
-
-      this.devices = this.app[0].devices;
-      // console.log(this.devices);
-
+    const db_app = new ApplicationsDatabase();
+    db_app.transaction('rw', db_app.values, async() => {
+      const app = await db_app.values.where('app_name').equals(this.selectedApp).toArray();
+      this.devices = app[0].devices;
     }).catch(e => {
       console.log(e.stack || e);
     });
   }
 
-  changed(change) {
-    console.log('Changed: ', change);
+  //check if the port was previous initialized
+  verifyPort() {
+    const parts_db = new PartsDatabase();
+    parts_db.transaction('rw', parts_db.values, async() => {
+      const dbparts = await parts_db.values
+        .where('[app_name+dev_id+port]')
+        .equals([this.selectedApp, this.deviceConfig.value.dev_id, this.deviceConfig.value.port]).toArray();
+
+      //load the results into the input forms
+      this.divisionValue = dbparts[0].parts.length;
+      this.deviceConfig.value.packet_parts = dbparts[0].parts.length;
+      this.changed('packet', dbparts[0].parts);
+
+    }).catch(e => {
+      console.log("Porta não cadastrada!");
+      //console.log(e.stack || e);
+    });
+
+  }
+
+  //verify modifications in the input forms, to enable/disable form fields.
+  changed(change, parts=null) {
     if (change === 'device') {
-      this.deviceSelected = true;
+      this.deviceSelected = true; //enables port form field
+
+      //reset values of port and parts
+      this.deviceConfig.patchValue({port: '', packet_parts: ''});
+      this.portSelected = false;
+      this.packetSelected = false;
     }
     if (change === 'port') {
+      //Verify if port is valid
       if (this.deviceConfig.value.port > 0 && this.deviceConfig.value.port < 256) {
-        this.portSelected = true;
+        this.portSelected = true; //enables packet_part form field
+        this.verifyPort(); //verify if port was previously saved
       } else {
         this.portSelected = false;
-      }
-    } else if (change === 'length') {
-      if (this.deviceConfig.value.packet_length > 0) {
-        this.lengthSelected = true;
-      } else {
-        this.lengthSelected = false;
       }
     } else if (change === 'packet') {
       if (this.deviceConfig.value.packet_parts > 0) {
         this.packetParts  = [];
+        //create a vector of forms with the input packet_parts
         for (let i = 0; i < this.deviceConfig.value.packet_parts; i++) {
           this.booleanPacket[i] = false;
           this.packetParts[i] = new FormGroup({
@@ -130,15 +149,36 @@ export class SettingsComponent implements OnInit{
             end_bit: new FormControl(''),
             scale: new FormControl('')
           });
+          //load the values previously saved in the IndexedDB
+          if (parts) {
+            this.packetParts[i].setValue({
+              fieldname: parts[i].fieldname,
+              data_type: parts[i].data_type,
+              start_bit: parts[i].start_bit,
+              end_bit: parts[i].end_bit,
+              scale: parts[i].scale
+            });
+
+            //hide, if necessary, the forms end_bit and/or scale
+            if (parts[i].data_type === 'booleano') {
+              this.booleanPacket[i] = true;
+            } else {
+              this.booleanPacket[i] = false;
+            }
+            if (parts[i].data_type === 'string') {
+              this.isString[i] = true;
+            } else {
+              this.isString[i] = false;
+            }
+          }
         }
-        this.packetSelected = true;
+        this.packetSelected = true; //Show the Parts inputs forms
       } else {
         this.packetSelected = false;
       }
     }
-
-    console.log(this.deviceConfig.value);
   }
+  //hide, if necessary, the forms end_bit and/or scale (Called from HTML)
   checkType(data_type, i) {
     console.log('Tipo de dado: ', data_type.value);
     if (data_type.value === 'booleano'){
@@ -148,17 +188,19 @@ export class SettingsComponent implements OnInit{
     }
     if (data_type.value === 'string'){
       this.isString[i] = true;
-    }
-    else {
+    } else {
       this.isString[i] = false;
     }
   }
 
-  save() {
+  //save the parts that were inserted by user
+  saveParts() {
 
-    let valid_rows = true;
     let packet_parts = [];
-    for(let i = 0; i< this.packetParts.length; i++){
+
+    //verify if all the forms were filled correctly
+    let valid_rows = true;
+    for (let i = 0; i< this.packetParts.length; i++){
       if (!this.packetParts[i].valid){
         alert('Campo Inválido na Linha ' + i + 1);
         valid_rows = false;
@@ -167,14 +209,14 @@ export class SettingsComponent implements OnInit{
       }
     }
 
+    //if all forms were filled correctly.
     if (valid_rows) {
-
       const parts_db = new PartsDatabase();
 
+      //Insert a object for each packet part
       for (let i = 0; i < packet_parts.length; i++) {
         parts_db.transaction('rw', parts_db.values, async() => {
-
-         await parts_db.values.put({
+          await parts_db.values.put({
             app_name: this.selectedApp,
             dev_id: this.deviceConfig.value.dev_id,
             port: this.deviceConfig.value.port,
@@ -187,30 +229,6 @@ export class SettingsComponent implements OnInit{
           console.log(e.stack || e);
         });
       }
-
-      // const index = (this.app[0].devices).findIndex(item => item.dev_id === this.deviceConfig.value.dev_id);
-
-      // this.app[0].devices[index].ports[this.deviceConfig.value.port] = {
-      //   'port_num': this.deviceConfig.value.port,
-      //   'packet_length': this.deviceConfig.value.packet_length,
-      //   'parts': packet_parts};
-
-      // console.log(this.app[0]);
-
-      // this.db_app.transaction('rw', this.db_app.values, async() => {
-      //   this.db_app.values.where('app_name').equals(this.selectedApp).modify(this.app[0]);
-      //   this.app = await this.db_app.values.where('app_name').equals(this.selectedApp).toArray();
-      //   console.log(this.app[0]);
-      //   for (let i = 0; i < this.app[0].devices.length; i++){
-      //     this.devices[i] = this.app[0].devices[i].dev_id;
-      //   }
-      //   console.log(this.devices);
-      //
-      // }).catch(e => {
-      //   console.log(e.stack || e);
-      // });
-
     }
-
   }
 }

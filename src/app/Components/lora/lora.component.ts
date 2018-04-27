@@ -110,25 +110,23 @@ export class LoraComponent implements OnInit {
 
   }
 
-
-
   convertToCSV(objArray) {
-  const array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-  let str = 'id, counter, payload_raw, port, airtime, coding_rate, data_rate, frequency, ' +
-    'timestamp, gtw_id, gtw_channel, gtw_rssi, gtw_snr' + '\r\n';
+    const array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    let str = 'id, counter, payload_raw, port, airtime, coding_rate, data_rate, frequency, ' +
+      'timestamp, gtw_id, gtw_channel, gtw_rssi, gtw_snr' + '\r\n';
 
-  for (let i = 0; i < array.length; i++) {
-    let line = '';
-    for (let index in array[i]) {
-      if (line != '') line += ','
+    for (let i = 0; i < array.length; i++) {
+      let line = '';
+      for (let index in array[i]) {
+        if (line != '') line += ','
 
-      line += array[i][index];
+        line += array[i][index];
+      }
+
+      str += line + '\r\n';
     }
 
-    str += line + '\r\n';
-  }
-
-  return str;
+    return str;
   }
 
   downloadCSV(){

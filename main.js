@@ -5,8 +5,12 @@ const url = require('url');
 let win;
 
 function createWindow () {
-  win = new BrowserWindow({minWidth:800, minHeight:600, fullscreen:true});
+  win = new BrowserWindow({
+    minWidth: 1366,
+    minHeight: 768,
+    fullscreen: true});
   // load the dist folder from Angular
+  win.setFullScreen(true);
   win.loadURL(url.format({
     pathname: path.join(__dirname, 'dist/index.html'),
     protocol: 'file:',

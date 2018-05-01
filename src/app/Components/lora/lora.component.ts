@@ -27,8 +27,8 @@ export interface Values {
 class ValuesDatabase extends Dexie {
   values: Dexie.Table<Values, number>;
 
-  constructor() {
-    super('bufsm_bufsm_01');
+  constructor(db_name) {
+    super(db_name);
     this.version(1).stores({
       values: '++id, counter, payload_raw, port, airtime, coding_rate, data_rate, frequency, timestamp,' +
       'gtw_id, gtw_channel, gtw_rssi, gtw_snr'
@@ -52,7 +52,7 @@ export class LoraComponent implements OnInit {
 
   constructor() {
 
-    const db = new ValuesDatabase();
+    const db = new ValuesDatabase('bufsm_bufsm_01');
 
     db.transaction('rw', db.values, async() => {
 
@@ -64,7 +64,7 @@ export class LoraComponent implements OnInit {
 
       // Query:
       let storedValues = await db.values.toArray();
-      // console.log(JSON.stringify(storedValues));
+      console.log(JSON.stringify(storedValues));
 
 
 

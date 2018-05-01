@@ -6,11 +6,11 @@ let win;
 
 function createWindow () {
   win = new BrowserWindow({
-    minWidth: 1366,
-    minHeight: 768,
+    minWidth: 800,
+    minHeight: 600,
     fullscreen: true});
   // load the dist folder from Angular
-  win.setFullScreen(true);
+
   win.loadURL(url.format({
     pathname: path.join(__dirname, 'dist/index.html'),
     protocol: 'file:',
@@ -18,7 +18,8 @@ function createWindow () {
   }));
 
   // Open the DevTools optionally:
-  win.webContents.openDevTools()
+  win.webContents.openDevTools();
+  win.setFullScreen(true);
 
   win.on('closed', () => {
     win = null

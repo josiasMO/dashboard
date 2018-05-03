@@ -13,7 +13,26 @@
           <mat-list-item *ngFor="let value of values" class="nofocus">
             <button matLine mat-button mat-dialog-close  [ngClass]="'appItem'"
                     (click)="itemSelected(value.app_name, value.port, value.app_key)">{{ value.app_name }}</button>
+            <button [ngClass]="'optionButton editButton nofocus'" (click)="editApp(value.app_name, value.port, value.app_key)">
+              <i class="material-icons">mode_edit</i></button>
+            <button [ngClass]="'optionButton deleteButton nofocus'" (click)="deleteButton(value.app_name)">
+              <i class="material-icons">delete_forever</i></button>
           </mat-list-item>
+
+
+          <!--<mat-list-item *ngFor="let value of values" class="nofocus">-->
+            <!--<div [ngClass]="'appsList'">-->
+              <!--<button matLine mat-raised-button mat-dialog-close  [ngClass]="'appItem'"-->
+              <!--(click)="itemSelected(value.app_name, value.port, value.app_key)">{{ value.app_name }}</button>-->
+            <!--</div>-->
+            <!--<div [ngClass]="'buttonsList'">-->
+          <!--<button mat-button [ngClass]="'optionButton nofocus'" (click)="deleteApp(value.app_name)">-->
+            <!--<i class="material-icons">mode_edit</i></button>-->
+          <!--<button [ngClass]="'optionButton nofocus'"-->
+                  <!--(click)="deleteApp(value.app_name)"><i class="material-icons">delete_forever</i></button>-->
+            <!--</div>-->
+
+          <!--</mat-list-item>-->
 
         </mat-nav-list>
 

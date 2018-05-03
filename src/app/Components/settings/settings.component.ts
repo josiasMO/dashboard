@@ -229,6 +229,7 @@ export class SettingsComponent implements OnInit{
           console.log(e.stack || e);
         });
       }
+      alert('Configuração da porta ' + this.deviceConfig.value.port + ' salva com sucesso');
     }
   }
 }

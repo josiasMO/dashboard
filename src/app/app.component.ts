@@ -61,9 +61,11 @@ export class DialogFileComponent implements OnInit{
 
   selectedApp: string;
   application: FormGroup;
-  validApps = false;
-  goBack = false;
+  validApps = false; // control variable to load HTML
+  goBack = false; // enable/disable button Voltar
   values = [];
+  app_db = new ApplicationsDatabase();
+  old_app = ''; // saves old app_name, in case of change it needs to be updated
 
   constructor(private data: SharedataService) {
     this.application = new FormGroup({
@@ -71,24 +73,26 @@ export class DialogFileComponent implements OnInit{
       port: new FormControl('', Validators.required),
       app_key: new FormControl('', Validators.required)
     });
-   this.loadDB();
+   this.loadApps();
 
   }
   ngOnInit(){
+    // subscribe to app name service
     this.data.currentApp.subscribe(selectedApp => this.selectedApp = selectedApp);
   }
 
-  loadDB() {
-    const db = new ApplicationsDatabase();
-
-    db.transaction('rw', db.values, async() => {
-      this.values = await db.values.toArray();
+  // load apps list
+  loadApps() {
+    this.app_db.transaction('rw', this.app_db.values, async() => {
+      this.values = await this.app_db.values.toArray();
       console.log(JSON.stringify(this.values));
       if (this.values.length > 0) {
         this.validApps = true;
         this.goBack = true;
       } else {
         alert('Nenhuma Aplicação Cadastrada');
+        this.addApp();
+        this.goBack = false;
       }
 
     }).catch(e => {
@@ -96,29 +100,60 @@ export class DialogFileComponent implements OnInit{
     });
 
   }
-  addApp() {
-    this.application = new FormGroup({
-      app_name: new FormControl('', Validators.required),
-      port: new FormControl('', Validators.required),
-      app_key: new FormControl('', Validators.required)
+
+  deleteButton(app_name) {
+    confirm('Deseja deletar a aplicação ' + app_name + '?');
+    this.deleteApp(app_name);
+    this.loadApps();
+  }
+
+  // delete app_name row from application table
+  deleteApp(app_name) {
+    this.app_db.transaction('rw', this.app_db.values, async() => {
+      let value = await this.app_db.values.where('app_name').equals(app_name).delete();
+    }).catch(e => {
+      console.log('Erro ao apagar aplicação');
+    });
+  }
+
+  // edit selected app
+  editApp(app_name, port, app_key) {
+    confirm('Deseja editar a aplicação ' + app_name + '?');
+    this.old_app = app_name;
+    this.application.setValue({
+      app_name: app_name,
+      port: port,
+      app_key: app_key
     });
     this.validApps = false;
   }
 
-  save() {
-    const db = new ApplicationsDatabase();
+  // clear the input form
+  addApp() {
+    this.application.setValue({
+      app_name: '',
+      port: '',
+      app_key: ''
+    });
+    this.validApps = false;
+  }
 
-    db.transaction('rw', db.values, async() => {
-      const storedValues = await db.values.toArray();
+  // save new application
+  save() {
+    this.deleteApp(this.old_app); // verify existence and delete old values from db
+    this.old_app = '';
+
+    this.app_db.transaction('rw', this.app_db.values, async() => {
+      const storedValues = await this.app_db.values.toArray();
 
       if ((storedValues.filter(x => x.app_name == this.application.value.app_name)).length === 0) {
-        await db.values.add({
+        await this.app_db.values.add({
           app_name: this.application.value.app_name,
           port: this.application.value.port,
           app_key: this.application.value.app_key,
           devices: []});
         alert('Applicação Adicionada: ' + this.application.value.app_name);
-        this.loadDB();
+        this.loadApps();
       } else {
         alert('Erro! Aplicação ' + this.application.value.app_name + ' já existente!!!');
       }
@@ -126,6 +161,8 @@ export class DialogFileComponent implements OnInit{
       console.log(e.stack || e);
     });
   }
+
+  // application selected. Start MQTT connection with TTN
   itemSelected(app_name, port, app_key) {
     this.data.changeApp(app_name);
     connectMQTT(app_name, port, app_key);

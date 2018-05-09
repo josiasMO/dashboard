@@ -13,3 +13,16 @@
   left: 0;
   right: 0;
 }
+@media only screen and (min-width: 600px) {
+  .mat-form-field.mat-form-field {
+    min-width: 100px;
+    max-width: 200px;
+    width: 30%;
+  }
+}
+.line{
+  border-style: solid;
+  border-width: 1px 1px 1px 1px;
+  border-color: #d2d2d2;
+
+}

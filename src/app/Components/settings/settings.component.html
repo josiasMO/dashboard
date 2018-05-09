@@ -37,8 +37,8 @@
       <mat-card style="width: 100%">
         <mat-card-title>Partes do Pacote</mat-card-title>
         <mat-card-content>
-          <div *ngFor="let packet of packetParts; let i = index">
-            <div class="row"  [formGroup]="packet">
+          <div *ngFor="let packet of packetParts; let i = index" >
+            <div class="row"  [formGroup]="packet" [ngClass]="'line'" >
               <div class="col-md-2" >
                 <mat-form-field>
                   <input matInput type="text" placeholder="Nome do campo" formControlName="fieldname">
@@ -46,7 +46,7 @@
                 </mat-form-field>
               </div>
 
-              <div class="col-md-2 offset-1">
+              <div class="col-md-2">
                 <mat-form-field>
                   <mat-select placeholder="Tipo de dado" formControlName="data_type" (change)="checkType($event, i)" required>
                     <mat-option *ngFor="let type of dataTypes" [value]="type">
@@ -55,28 +55,34 @@
                   </mat-select>
                 </mat-form-field>
               </div>
-              <div class="col-md-1 offset-1" *ngIf="booleanPacket[i]">
+              <div class="col-md-2 " *ngIf="booleanPacket[i]">
                 <mat-form-field>
                   <input matInput type="number" placeholder="Bit Booleano" formControlName="start_bit">
                   <mat-error>Campo Inválido</mat-error>
                 </mat-form-field>
               </div>
 
-              <div class="col-md-1 offset-1" *ngIf="!booleanPacket[i]">
+              <div class="col-md-2 " *ngIf="!booleanPacket[i]">
                 <mat-form-field>
                   <input matInput type="number" placeholder="Bit Inicial" formControlName="start_bit">
                   <mat-error>Campo Inválido</mat-error>
                 </mat-form-field>
               </div>
-              <div class="col-md-1 offset-1" *ngIf="!booleanPacket[i]">
+              <div class="col-md-2" *ngIf="!booleanPacket[i]">
                 <mat-form-field>
                   <input matInput type="number" placeholder="Bit Final" formControlName="end_bit">
                   <mat-error>Campo Inválido</mat-error>
                 </mat-form-field>
               </div>
-              <div class="col-md-2 offset-1" *ngIf="!booleanPacket[i] && !isString[i]">
+              <div class="col-md-2 " *ngIf="!booleanPacket[i] && !isString[i]">
                 <mat-form-field>
                   <input matInput type="number" placeholder="Fator de Multiplicação" formControlName="scale">
+                  <mat-error>Campo Inválido</mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-md-2" *ngIf="!booleanPacket[i] && !isString[i]">
+                <mat-form-field>
+                  <input matInput type="number" placeholder="Offset" formControlName="offset">
                   <mat-error>Campo Inválido</mat-error>
                 </mat-form-field>
               </div>

@@ -61,7 +61,7 @@ export class SettingsComponent implements OnInit{
   deviceSelected = false;
   portSelected = false;
   packetSelected = false;
-  divisionValue;
+  divisionValue;1
 
   //variables that hide/show fields end_bit and/or scale
   booleanPacket = [];
@@ -147,7 +147,8 @@ export class SettingsComponent implements OnInit{
             data_type: new FormControl('', Validators.required),
             start_bit: new FormControl('', [Validators.required, Validators.min(0)]),
             end_bit: new FormControl(''),
-            scale: new FormControl('')
+            scale: new FormControl(''),
+            offset: new FormControl('')
           });
           //load the values previously saved in the IndexedDB
           if (parts) {
@@ -156,7 +157,8 @@ export class SettingsComponent implements OnInit{
               data_type: parts[i].data_type,
               start_bit: parts[i].start_bit,
               end_bit: parts[i].end_bit,
-              scale: parts[i].scale
+              scale: parts[i].scale,
+              offset: parts[i].offset
             });
 
             //hide, if necessary, the forms end_bit and/or scale
@@ -180,7 +182,7 @@ export class SettingsComponent implements OnInit{
   }
   //hide, if necessary, the forms end_bit and/or scale (Called from HTML)
   checkType(data_type, i) {
-    console.log('Tipo de dado: ', data_type.value);
+    // console.log('Tipo de dado: ', data_type.value);
     if (data_type.value === 'booleano'){
       this.booleanPacket[i] = true;
     } else {
@@ -223,10 +225,10 @@ export class SettingsComponent implements OnInit{
             parts: packet_parts});
 
          const dbparts = await parts_db.values.toArray();
-         console.log('Db_parts: ', dbparts);
+         // console.log('Db_parts: ', dbparts);
 
         }).catch(e => {
-          console.log(e.stack || e);
+          console.log('Erro inserindo tabela');
         });
       }
       alert('Configuração da porta ' + this.deviceConfig.value.port + ' salva com sucesso');

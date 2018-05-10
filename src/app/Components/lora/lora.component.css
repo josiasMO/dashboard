@@ -34,3 +34,36 @@
   font-size: 1em;
   color: white;
 }
+
+@media only screen and (min-width: 600px) {
+  .mat-form-field.mat-form-field {
+    min-width: 100px;
+    max-width: 200px;
+    width: 30%;
+  }
+}
+mat-header-cell {
+  display:flex;
+  justify-content:center;
+}
+mat-row {
+  text-align: center;
+}
+.mat-column-id {
+  flex: 0 0 30px;
+}
+.mat-column-port{
+  flex: 0 0 50px;
+}
+.mat-column-counter {
+  flex: 0 0 60px;
+}
+.mat-column-frequency{
+  flex: 0 0 80px;
+}
+.mat-column-airtime {
+  flex: 0 0 100px;
+}
+.mat-column-data_rate {
+  flex: 0 0 100px;
+}

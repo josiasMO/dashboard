@@ -1,11 +1,35 @@
-<div [ngClass]="'lora'" ng-if="loadTable">
+<div [ngClass]="'lora'">
   <div class="container">
-    <div class="row">
-
-      <button mat-button  [ngClass]="'downloadButton'" (click)="downloadCSV()" style="float: right">
-        Download CSV</button>
+    <div class="row" [formGroup]="deviceConfig">
+      <mat-card style="width: 100%">
+        <mat-card-title>Selecionar Dispositivo</mat-card-title>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-md-2">
+              <mat-form-field>
+                <mat-select placeholder="Dispositivo" formControlName="dev_id" (change)="changed('device')" required>
+                  <mat-option *ngFor="let device of devices" [value]="device">
+                    {{ device }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-md-2 offset-1" *ngIf="deviceSelected" >
+              <mat-form-field>
+                <input matInput type="number" placeholder="Port(Pacote)" formControlName="port"
+                       [readonly]="!deviceSelected" (change)="changed('port')" >
+                <mat-error>Campo Inválido</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-md-2 offset-1" *ngIf="portSelected">
+              <button mat-button  [ngClass]="'downloadButton'" (click)="downloadCSV()" style="float: right">
+                Download CSV</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
-    <div class="row">
+    <div *ngIf="portSelected">
       <mat-table #table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="id">
           <mat-header-cell *matHeaderCellDef mat-sort-header> id </mat-header-cell>
@@ -15,10 +39,6 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>Counter</mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.counter}} </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="payload_raw">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Payload Raw</mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.payload_raw}} </mat-cell>
-        </ng-container>
         <ng-container matColumnDef="port">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Port</mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.port}} </mat-cell>
@@ -26,10 +46,6 @@
         <ng-container matColumnDef="airtime">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Airtime</mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.airtime}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="coding_rate">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Coding Rate</mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.coding_rate}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="data_rate">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Data Rate</mat-header-cell>
@@ -43,21 +59,9 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>Timestamp</mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.timestamp}} </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="gtw_id">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>GTW id</mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.gtw_id}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="gtw_channel">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>GTW channel</mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.gtw_channel}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="gtw_rssi">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>GTW rssi</mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.gtw_rssi}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="gtw_snr">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>GTW SNR</mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.gtw_snr}} </mat-cell>
+        <ng-container matColumnDef="payload_raw">
+          <mat-header-cell *matHeaderCellDef mat-sort-header >Payload Raw</mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.payload_raw}} </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

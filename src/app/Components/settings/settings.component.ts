@@ -224,7 +224,7 @@ export class SettingsComponent implements OnInit{
             port: this.deviceConfig.value.port,
             parts: packet_parts});
 
-         const dbparts = await parts_db.values.toArray();
+         // const dbparts = await parts_db.values.toArray();
          // console.log('Db_parts: ', dbparts);
 
         }).catch(e => {

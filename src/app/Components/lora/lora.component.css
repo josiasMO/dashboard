@@ -50,13 +50,13 @@ mat-row {
   text-align: center;
 }
 .mat-column-id {
-  flex: 0 0 30px;
+  flex: 0 0 50px;
 }
 .mat-column-port{
   flex: 0 0 50px;
 }
 .mat-column-counter {
-  flex: 0 0 60px;
+  flex: 0 0 80px;
 }
 .mat-column-frequency{
   flex: 0 0 80px;

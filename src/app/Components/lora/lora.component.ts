@@ -85,6 +85,7 @@ export class LoraComponent implements OnInit {
   dataSource;
   deviceConfig: FormGroup;
   devices = [];
+  packet_parts = [];
 
   //variables that control readonly of forms
   deviceSelected = false;
@@ -149,47 +150,61 @@ export class LoraComponent implements OnInit {
     const db = new ValuesDatabase(this.selectedApp + '_' + this.deviceConfig.value.dev_id);
 
     db.transaction('rw', db.values, async() => {
-      let storedValues = await db.values.where('port').equals(this.deviceConfig.value.port).toArray();
-      // console.log(JSON.stringify(storedValues));
+      let storedValues = await db.values.orderBy('timestamp').reverse()
+        .and(x => x.port === this.deviceConfig.value.port).limit(100).toArray();
 
-      for (let i = 0; i < storedValues.length; i++) {
-        this.DB_VALUES[i] = {
-          id: storedValues[i].id,
-          counter: storedValues[i].counter,
-          port: storedValues[i].port,
-          airtime: storedValues[i].airtime,
-          data_rate: storedValues[i].data_rate,
-          frequency: storedValues[i].frequency,
-          timestamp: storedValues[i].timestamp,
-          payload_raw: storedValues[i].payload_raw
-        };
+      if (storedValues.length === 0) {
+        alert('Nenhum dado recebido na porta selecionada');
+      } else {
+
+        for (let i = 0; i < storedValues.length; i++) {
+          this.DB_VALUES[i] = {
+            id: storedValues[i].id,
+            counter: storedValues[i].counter,
+            port: storedValues[i].port,
+            airtime: storedValues[i].airtime,
+            data_rate: storedValues[i].data_rate,
+            frequency: storedValues[i].frequency,
+            timestamp: storedValues[i].timestamp,
+            payload_raw: storedValues[i].payload_raw
+          };
+        }
+        // let string_msg = Buffer.from(this.DB_VALUES[0].payload_raw, 'base64').toString();
+        // console.log('Mensagem: -29.' + string_msg.slice(0, 5) + ',  -53.' + string_msg.slice(5));
+        console.log('Bits: ' +  this.DB_VALUES[0].payload_raw.charCodeAt(0).toString(2));
+
+        this.load_port_parts();
       }
-      this.load_port_parts();
-      let string_msg = Buffer.from(this.DB_VALUES[0].payload_raw, 'base64').toString();
-      console.log('Mensagem: -29.' + string_msg.slice(0, 5) + ',  -53.' + string_msg.slice(5));
-      console.log('Bits: ' +  this.DB_VALUES[0].payload_raw.charCodeAt(0).toString(2));
-
-      this.dataSource = new MatTableDataSource(this.DB_VALUES);
-      this.loadTable = true;
-
-      this.dataSource.sort = this.sort;
-
-
     }).catch(e => {
       console.log(e.stack || e);
     });
   };
 
   load_port_parts(){
+    this.packet_parts = [];
     const db_parts = new PartsDatabase();
     db_parts.transaction('rw', db_parts.values, async() => {
-      let storedValues = await db_parts.values.where('[app_name+dev_id+port]').equals([this.selectedApp,
+      const received_parts = await db_parts.values.where('[app_name+dev_id+port]').equals([this.selectedApp,
         this.deviceConfig.value.dev_id, this.deviceConfig.value.port]).toArray();
-      console.log('Parts: ', JSON.stringify(storedValues));
-
+      this.packet_parts = received_parts[0].parts;
+      console.log('Parts1: ', JSON.stringify(this.packet_parts));
+      this.create_table(true);
     }).catch(e => {
+      this.create_table(false);
       console.log(e.stack || e);
     });
+  }
+
+  create_table(parts_present) {
+    console.log('values: ', JSON.stringify(this.DB_VALUES));
+    if (parts_present){
+      console.log('Parts2: ', JSON.stringify(this.packet_parts));
+    } else {
+      console.log('Parts Não cadastradas');
+    }
+    this.dataSource = new MatTableDataSource(this.DB_VALUES);
+    this.loadTable = true;
+    this.dataSource.sort = this.sort;
   }
 
 

@@ -21,8 +21,10 @@
   }
 }
 .line{
+  top:10px;
   border-style: solid;
   border-width: 1px 1px 1px 1px;
   border-color: #d2d2d2;
+  margin-bottom: 5px;
 
 }

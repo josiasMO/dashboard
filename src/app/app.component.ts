@@ -102,9 +102,10 @@ export class DialogFileComponent implements OnInit{
   }
 
   deleteButton(app_name) {
-    confirm('Deseja deletar a aplicação ' + app_name + '?');
-    this.deleteApp(app_name);
-    this.loadApps();
+    if (confirm('Deseja deletar a aplicação ' + app_name + '?')) {
+      this.deleteApp(app_name);
+      this.loadApps();
+    }
   }
 
   // delete app_name row from application table
@@ -118,14 +119,15 @@ export class DialogFileComponent implements OnInit{
 
   // edit selected app
   editApp(app_name, port, app_key) {
-    confirm('Deseja editar a aplicação ' + app_name + '?');
-    this.old_app = app_name;
-    this.application.setValue({
-      app_name: app_name,
-      port: port,
-      app_key: app_key
-    });
-    this.validApps = false;
+    if (confirm('Deseja editar a aplicação ' + app_name + '?')) {
+      this.old_app = app_name;
+      this.application.setValue({
+        app_name: app_name,
+        port: port,
+        app_key: app_key
+      });
+      this.validApps = false;
+    }
   }
 
   // clear the input form

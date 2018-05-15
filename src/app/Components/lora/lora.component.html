@@ -59,10 +59,25 @@
           <mat-header-cell *matHeaderCellDef mat-sort-header>Timestamp</mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.timestamp}} </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="payload_raw">
+        <ng-container matColumnDef="payload_raw" *ngIf="!partsRegistered" >
           <mat-header-cell *matHeaderCellDef mat-sort-header >Payload Raw</mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.payload_raw}} </mat-cell>
         </ng-container>
+        <ng-container *ngIf="partsRegistered">
+          <ng-container *ngFor="let item of items_packet;"  matColumnDef={{item}}>
+            <mat-header-cell *matHeaderCellDef mat-sort-header >{{item}}</mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element[item]}} </mat-cell>
+          </ng-container>
+        </ng-container>
+
+        <!--<ng-container matColumnDef="lat" *ngIf="partsRegistered" >-->
+          <!--<mat-header-cell *matHeaderCellDef mat-sort-header >Lat</mat-header-cell>-->
+          <!--<mat-cell *matCellDef="let element"> {{element.lat}} </mat-cell>-->
+        <!--</ng-container>-->
+        <!--<ng-container matColumnDef="lng" *ngIf="partsRegistered" >-->
+          <!--<mat-header-cell *matHeaderCellDef mat-sort-header >Lng</mat-header-cell>-->
+          <!--<mat-cell *matCellDef="let element"> {{element.lng}} </mat-cell>-->
+        <!--</ng-container>-->
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       </mat-table>

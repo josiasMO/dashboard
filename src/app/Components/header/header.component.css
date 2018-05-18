@@ -100,7 +100,7 @@
    font-size: 1em;
    color: white;
  }
-.sidenavItemLora{
+.sidenavItemData{
   text-align: right;
   vertical-align: middle;
   position: absolute;
@@ -117,12 +117,29 @@
   font-size: 1em;
   color: white;
 }
-.sidenavItemMaps{
+.sidenavItemLora{
   text-align: right;
   vertical-align: middle;
   position: absolute;
   width: 170px;
   top: 140px;
+  left: 5px;
+  height: 40px;
+  background: #6db3f2; /* Old browsers */
+  background: -moz-linear-gradient(-45deg, #6db3f2 0%, #54a3ee 50%, #54a3ee 51%, #1e69de 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(-45deg, #6db3f2 0%,#54a3ee 50%,#54a3ee 51%,#1e69de 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg, #6db3f2 0%,#54a3ee 50%,#54a3ee 51%,#1e69de 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6db3f2', endColorstr='#1e69de',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  font-family: 'Raleway', Helvetica, Arial, sans-serif;
+  font-size: 1em;
+  color: white;
+}
+.sidenavItemMaps{
+  text-align: right;
+  vertical-align: middle;
+  position: absolute;
+  width: 170px;
+  top: 200px;
   left: 5px;
   height: 40px;
   background: #6db3f2; /* Old browsers */

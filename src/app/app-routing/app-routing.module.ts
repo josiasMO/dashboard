@@ -5,6 +5,7 @@ import { MapComponent } from '../Components/map/map.component';
 import { LoraComponent } from '../Components/lora/lora.component';
 import { SettingsComponent } from '../Components/settings/settings.component';
 import { ApplicationComponent  } from '../Components/application/application.component';
+import { DataComponent } from '../Components/data/data.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,10 @@ const routes: Routes = [
     path: 'settings',
     component: SettingsComponent,
   },
+  {
+    path: 'data',
+    component: DataComponent,
+  }
 
 
 ];

@@ -30,8 +30,10 @@ import { LoraComponent } from './Components/lora/lora.component';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { SettingsComponent } from './Components/settings/settings.component';
 import { ApplicationComponent } from './Components/application/application.component';
+import { DataComponent } from './Components/data/data.component';
 
 import { SharedataService } from './sharedata.service';
+
 
 
 @NgModule({
@@ -42,7 +44,8 @@ import { SharedataService } from './sharedata.service';
     LoraComponent,
     SettingsComponent,
     ApplicationComponent,
-    DialogFileComponent
+    DialogFileComponent,
+    DataComponent
 
   ],
   imports: [

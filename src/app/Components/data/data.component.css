@@ -1,0 +1,69 @@
+.data{
+  top: 50px;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  position: absolute;
+  background-color: white;
+  z-index: -1;
+}
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  font-size: 10px;
+  white-space: unset !important;
+}
+
+.mat-table {
+  overflow: auto;
+  /*max-height: 500px;*/
+}
+
+.mat-header-cell.mat-sort-header-sorted {
+  color: black;
+}
+.downloadButton{
+  margin-top: 5px;
+  vertical-align: middle;
+  text-align: center;
+  /*width: 150px;*/
+  background: #207cca;
+  font-family: 'Raleway', Helvetica, Arial, sans-serif;
+  font-size: 1em;
+  color: white;
+}
+
+@media only screen and (min-width: 600px) {
+  .mat-form-field.mat-form-field {
+    min-width: 100px;
+    max-width: 200px;
+    width: 30%;
+  }
+}
+mat-header-cell {
+  display:flex;
+  justify-content:center;
+}
+mat-row {
+  text-align: center;
+}
+.mat-column-id {
+  flex: 0 0 50px;
+}
+.mat-column-port{
+  flex: 0 0 50px;
+}
+.mat-column-counter {
+  flex: 0 0 80px;
+}
+.mat-column-frequency{
+  flex: 0 0 80px;
+}
+.mat-column-airtime {
+  flex: 0 0 100px;
+}
+.mat-column-data_rate {
+  flex: 0 0 100px;
+}

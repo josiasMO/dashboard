@@ -3,6 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Routes, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { MatSidenavModule,
   MatCheckboxModule,
@@ -71,7 +72,8 @@ import { SharedataService } from './sharedata.service';
     MatSelectModule,
     AppRoutingModule,
     NgbModule.forRoot(),
-    CdkTableModule
+    CdkTableModule,
+    HttpClientModule
   ],
   entryComponents: [AppComponent, DialogFileComponent],
   providers: [SharedataService],

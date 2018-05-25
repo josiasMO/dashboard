@@ -6,13 +6,14 @@ import { SharedataService } from './sharedata.service';
 
 import Dexie from 'dexie';
 
-declare function connectMQTT(app_name, port, app_key): any;
+declare function connectMQTT(app_name, port, app_key, ttn_handler): any;
 
 export interface Values {
   id?: number;
   app_name?: string;
   port?: number;
   app_key?: string;
+  ttn_handler?: string;
   devices?: any;
 }
 
@@ -22,11 +23,10 @@ class ApplicationsDatabase extends Dexie {
   constructor() {
     super('applications');
     this.version(1).stores({
-      values: '++id, app_name, port, app_key, devices'
+      values: '++id, app_name, port, app_key, ttn_handler, devices'
     });
   }
 }
-
 
 @Component({
   selector: 'app-root',
@@ -71,7 +71,8 @@ export class DialogFileComponent implements OnInit{
     this.application = new FormGroup({
       app_name: new FormControl('', Validators.required),
       port: new FormControl('', Validators.required),
-      app_key: new FormControl('', Validators.required)
+      app_key: new FormControl('', Validators.required),
+      ttn_handler: new FormControl('', Validators.required)
     });
    this.loadApps();
 
@@ -118,13 +119,14 @@ export class DialogFileComponent implements OnInit{
   }
 
   // edit selected app
-  editApp(app_name, port, app_key) {
+  editApp(app_name, port, app_key, ttn_handler) {
     if (confirm('Deseja editar a aplicação ' + app_name + '?')) {
       this.old_app = app_name;
       this.application.setValue({
         app_name: app_name,
         port: port,
-        app_key: app_key
+        app_key: app_key,
+        ttn_handler: ttn_handler
       });
       this.validApps = false;
     }
@@ -135,7 +137,8 @@ export class DialogFileComponent implements OnInit{
     this.application.setValue({
       app_name: '',
       port: '',
-      app_key: ''
+      app_key: '',
+      ttn_handler: ''
     });
     this.validApps = false;
   }
@@ -153,6 +156,7 @@ export class DialogFileComponent implements OnInit{
           app_name: this.application.value.app_name,
           port: this.application.value.port,
           app_key: this.application.value.app_key,
+          ttn_handler: this.application.value.ttn_handler,
           devices: []});
         alert('Applicação Adicionada: ' + this.application.value.app_name);
         this.loadApps();
@@ -165,8 +169,8 @@ export class DialogFileComponent implements OnInit{
   }
 
   // application selected. Start MQTT connection with TTN
-  itemSelected(app_name, port, app_key) {
+  itemSelected(app_name, port, app_key, ttn_handler) {
     this.data.changeApp(app_name);
-    connectMQTT(app_name, port, app_key);
+    connectMQTT(app_name, port, app_key, ttn_handler);
   }
 }

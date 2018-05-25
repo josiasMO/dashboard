@@ -28,28 +28,27 @@ class ValuesDatabase extends Dexie {
   constructor(db_name) {
     super(db_name);
     this.version(1).stores({
-      values: '++id, counter, payload_raw, port, airtime, coding_rate, data_rate, frequency, timestamp,' +
+      values: '++id, [application+dev_id+port], counter, payload_raw, airtime, coding_rate, data_rate, frequency, timestamp,' +
       'gtw_id, gtw_channel, gtw_rssi, gtw_snr'
     });
   }
 }
 
-//Model of Application database
-export interface Application {
-  id?: number;
+//Model of Devices database
+export interface Devices{
   app_name?: string;
-  port?: number;
-  app_key?: string;
-  devices?: any;
+  dev_id?: string;
+  lat: number;
+  lng: number;
 }
 
-class ApplicationsDatabase extends Dexie {
-  values: Dexie.Table<Application, number>;
+class DevicesDatabase extends Dexie {
+  values: Dexie.Table<Devices, number>;
 
   constructor() {
-    super('applications');
+    super('devices');
     this.version(1).stores({
-      values: '++id, app_name, port, app_key, devices'
+      values: '[app_name+dev_id], lat, lng'
     });
   }
 }
@@ -116,16 +115,22 @@ export class DataComponent implements OnInit {
 
   }
 
-  //load list of devices from the current application and add them to dropdown menu
+  // load list of devices from the current application and add them to drop down menu
   load_devices() {
-    const db_app = new ApplicationsDatabase();
-    db_app.transaction('rw', db_app.values, async() => {
-      const app = await db_app.values.where('app_name').equals(this.selectedApp).toArray();
-      this.devices = app[0].devices;
+    const db_device = new DevicesDatabase();
+    db_device.transaction('rw', db_device.values, async() => {
+      const devs = await db_device.values.where('[app_name+dev_id]').between(
+        [this.selectedApp, Dexie.minKey], [this.selectedApp, Dexie.maxKey]).toArray();
+      this.devices = [];
+      for (let dev of devs) {
+        this.devices.push(dev.dev_id);
+      }
+      console.log('Devices: ', this.devices);
     }).catch(e => {
       console.log(e.stack || e);
     });
   }
+
 
   changed(change) {
     console.log(change);
@@ -165,11 +170,16 @@ export class DataComponent implements OnInit {
 
   load_data_device(parts_registered) {
 
-    const db = new ValuesDatabase(this.selectedApp + '_' + this.deviceConfig.value.dev_id);
+    const db = new ValuesDatabase('received_values'); //this.selectedApp + '_' + this.deviceConfig.value.dev_id);
 
     db.transaction('rw', db.values, async() => {
-      let storedValues = await db.values.orderBy('timestamp').reverse()
-        .and(x => x.port === this.deviceConfig.value.port).limit(100).toArray();
+      let storedValues = await db.values.where('[application+dev_id+port]')
+        .equals([this.selectedApp, this.deviceConfig.value.dev_id, this.deviceConfig.value.port])
+        .reverse().limit(100).toArray();
+
+
+      //let storedValues = await db.values.orderBy('timestamp').reverse()
+      //   .and(x => x.port === this.deviceConfig.value.port).limit(100).toArray();
 
       if (storedValues.length === 0) {
         alert('Nenhum dado recebido na porta selecionada');
@@ -207,12 +217,9 @@ export class DataComponent implements OnInit {
                   const current_part = output_binary.substring(l, l+8);
                   output_num += (parseInt(current_part, 2) - 48);
                 }
-                if(this.packet_parts[k].offset < 0)
-                  this.DB_VALUES[i][this.packet_parts[k].fieldname] = this.packet_parts[k].offset -
-                    (parseFloat(output_num) * (10**this.packet_parts[k].scale));
-                else
-                  this.DB_VALUES[i][this.packet_parts[k].fieldname] = this.packet_parts[k].offset +
-                    (parseFloat(output_num) * (10**this.packet_parts[k].scale));
+                this.DB_VALUES[i][this.packet_parts[k].fieldname] = this.packet_parts[k].offset +
+                    (parseFloat(output_num) * this.packet_parts[k].scale);
+
               }
               // else if (this.packet_parts[k].type === 'string'){
               //
@@ -241,12 +248,6 @@ export class DataComponent implements OnInit {
             };
           }
         }
-
-
-        // let string_msg = Buffer.from(this.DB_VALUES[0].payload_raw, 'base64').toString();
-        // console.log('Mensagem: -29.' + string_msg.slice(0, 5) + ',  -53.' + string_msg.slice(5));
-        // console.log('Bits: ' +  this.DB_VALUES[0].payload_raw.charCodeAt(0).toString(2));
-
         this.create_table(parts_registered);
       }
     }).catch(e => {

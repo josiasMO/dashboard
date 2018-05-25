@@ -5,7 +5,7 @@
 const mqtt = require('mqtt');
 const dexie = require('dexie');
 
-function connectMQTT(application, port, key) {
+function connectMQTT(application, port, key, ttn_handler) {
 
    var options = {
      port: port,
@@ -14,7 +14,7 @@ function connectMQTT(application, port, key) {
      keepalive: 60
    };
 
-   client  = mqtt.connect("mqtt://brazil.thethings.network", options);
+   client  = mqtt.connect("mqtt://" + ttn_handler, options);
 
    client.on('connect', function () {
      console.log("Connected");
@@ -30,20 +30,27 @@ function connectMQTT(application, port, key) {
 }
 
 function storeDB(msg) {
-  var db_app = new Dexie('applications');
-  db_app.version(1).stores({
-      values: '++id, app_name, port, app_key, devices'
+  // var db_app = new Dexie('applications');
+  // db_app.version(1).stores({
+  //     values: '++id, app_name, port, app_key, devices'
+  // });
+  var db_device = new Dexie('devices');
+  db_device.version(1).stores({
+    values: '[app_name+dev_id], lat, lng'
   });
 
-  db_app.transaction('rw', db_app.values, async() => {
-    var app = await db_app.values.where('app_name').equals(msg.app_id).toArray();
-    console.log(app[0].devices);
-    if (!(app[0].devices.includes(msg.dev_id))) {
-      console.log("Not equal");
-      app[0].devices.push(msg.dev_id);
-      db_app.values.where('app_name').equals(msg.app_id).modify(app[0]);
+
+  db_device.transaction('rw', db_device.values, async() => {
+
+    var device = await db_device.values.where('[app_name+dev_id]').equals([msg.app_id, msg.dev_id]).toArray();
+    if (device.length == 0) {
+      db_device.values.add({app_name: msg.app_id,
+                            dev_id: msg.dev_id,
+                            lat: null,
+                            lng: null});
+      console.log("Device not Equal");
     } else {
-      console.log("Equal");
+        console.log("Equal");
     }
   }).catch(e => {
     console.log(e.stack || e);
@@ -86,17 +93,20 @@ function storeDB(msg) {
 
   }
 
-  var db_msg = new Dexie(msg.app_id + '_' + msg.dev_id);
+  var db_msg = new Dexie('received_values');
   db_msg.version(1).stores({
-    values: "++id, counter, payload_raw, port, airtime, coding_rate, data_rate, " +
+    values: "++id, [application+dev_id+port], counter, payload_raw, payload_fields, airtime, coding_rate, data_rate, " +
     "frequency, timestamp, gateways"
   });
 
 
 
-  db_msg.values.add({counter: msg.counter,
-    payload_raw:(msg.payload_raw == null)?'':msg.payload_raw,
+  db_msg.values.add({application: msg.app_id,
+    dev_id: msg.dev_id,
     port: (msg.port == null)?'':msg.port,
+    counter: msg.counter,
+    payload_raw:(msg.payload_raw == null)?'':msg.payload_raw,
+    payload_fields:(msg.payload_fields == null)?'':msg.payload_fields,
     airtime: (msg.metadata.airtime == null)?'':msg.metadata.airtime,
     coding_rate: (msg.metadata.coding_rate == null)?'':msg.metadata.coding_rate,
     data_rate: (msg.metadata.data_rate == null)?'':msg.metadata.data_rate,

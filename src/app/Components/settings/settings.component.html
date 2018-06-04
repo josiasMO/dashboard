@@ -11,11 +11,11 @@
                             formControlName="dev_id"
                             (change)="changed('device')"
                             required>
-                  <mat-option *ngFor="let device of devices" [value]="device">{{ device }}</mat-option>
+                  <mat-option *ngFor="let device of devices_list" [value]="device">{{ device }}</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
-            <div class="col-md-3 offset-1" >
+            <div class="col-md-3 offset-1" *ngIf="deviceSelected" >
               <mat-form-field>
                 <input matInput type="number"
                        placeholder="Latitude"
@@ -25,7 +25,7 @@
                 <mat-error>Campo Inválido</mat-error>
               </mat-form-field>
             </div>
-            <div class="col-md-3 offset-1" >
+            <div class="col-md-3 offset-1" *ngIf="deviceSelected">
               <mat-form-field>
                 <input matInput type="number"
                        placeholder="Longitude"
@@ -37,7 +37,7 @@
             </div>
           </div>
           <div class="row" *ngIf="coordinatesChanged">
-            <div class="col-md-3 col-sm-3 col-md-offset-3 col-sm-offset-3">
+            <div class="col-md-1">
               <button mat-button [ngClass]="'saveButton'" (click)="saveCoordinates()">Salvar</button>
             </div>
           </div>
@@ -56,14 +56,17 @@
                 <mat-error>Campo Inválido</mat-error>
               </mat-form-field>
             </div>
-            <div class="col-md-3 offset-1" >
+            <div class="col-md-3 offset-1" *ngIf="portSelected" >
               <mat-checkbox formControlName="payload_fields"
-                            [value]="payload_fields"
-                            [ngModel]="payload_fields">
+                            [(ngModel)]="payload_fields"
+                            (change)="changed('payload_fields')">
                 Use Payload Fields
               </mat-checkbox>
             </div>
-            <div class="col-md-3 offset-1" *ngIf="!payload_fields" >
+            <div class="col-md-3 offset-1" *ngIf="payloadChanged && payload_fields">
+              <button mat-button [ngClass]="'saveButton'" (click)="saveParts()">Salvar</button>
+            </div>
+            <div class="col-md-3 offset-1" *ngIf="!payload_fields && portSelected" >
               <mat-form-field>
                 <input matInput type="number"
                        placeholder="Nº de Divisões(bits)"
@@ -84,7 +87,7 @@
         <mat-card-title>Partes do Pacote</mat-card-title>
         <mat-card-content>
           <div *ngFor="let packet of packetParts; let i = index" >
-            <div class="row"  [formGroup]="packet" [ngClass]="'line'" >
+            <div class="row"  [formGroup]="packet" >
               <div class="col-md-2" >
                 <mat-form-field>
                   <input matInput type="text" placeholder="Nome do campo" formControlName="fieldname">
@@ -135,7 +138,7 @@
             </div>
 
           </div>
-          <div class="row" *ngIf="coordinatesChanged">
+          <div class="row">
             <div class="col-md-2 offset-10 col">
               <button mat-button [ngClass]="'saveButton'"  (click)="saveParts()">Salvar</button>
             </div>

@@ -36,6 +36,7 @@
     "@types/googlemaps": "^3.30.7",
     "@types/mqtt": "^2.5.0",
     "bootstrap": "^4.0.0",
+    "chart.js": "^2.7.2",
     "core-js": "^2.4.1",
     "dexie": "^2.0.2",
     "mat-sidenav-menu": "^0.6.0",

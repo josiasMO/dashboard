@@ -12,7 +12,7 @@ export interface Devices{
   lng: number;
 }
 
-class DevicesDatabase extends Dexie {
+  class DevicesDatabase extends Dexie {
   values: Dexie.Table<Devices, number>;
 
   constructor() {
@@ -26,12 +26,10 @@ class DevicesDatabase extends Dexie {
 
 //Model of Parts database
 export interface Parts {
-  id?: number;
   app_name?: string;
   dev_id?: string;
-  lat: number;
-  lng: number;
   port?: number;
+  payload_fields?: boolean;
   parts?: any;
 }
 
@@ -41,7 +39,7 @@ class PartsDatabase extends Dexie {
   constructor() {
     super('parts');
     this.version(1).stores({
-      values: '[app_name+dev_id+port], parts'
+      values: '[app_name+dev_id+port], payload_fields, parts'
     });
   }
 }
@@ -56,9 +54,12 @@ export class SettingsComponent implements OnInit{
 
   selectedApp: string;
   devices = [];
+  devices_list = [];
   packetParts = [];
   dataTypes = ['número', 'string', 'booleano'];
   db_device: DevicesDatabase;
+  parts_db: PartsDatabase;
+
 
   //variables that control readonly of forms
   deviceSelected = false;
@@ -66,13 +67,14 @@ export class SettingsComponent implements OnInit{
   packetSelected = false;
   divisionValue;
   coordinatesChanged = false;
+  payloadChanged = false;
 
   //variables that hide/show fields end_bit and/or scale
   booleanPacket = [];
   isString = [];
 
   deviceConfig: FormGroup;
-  payload_fields: true;
+  payload_fields: boolean;
 
   constructor(private data: SharedataService) {
 
@@ -91,7 +93,9 @@ export class SettingsComponent implements OnInit{
   ngOnInit() {
     // subscribe to service to retrieve app name
     this.data.currentApp.subscribe(selectedApp => this.selectedApp = selectedApp);
+    this.parts_db = new PartsDatabase();
     this.loadDevices();
+    this.payload_fields = false;
 
   }
 
@@ -99,13 +103,13 @@ export class SettingsComponent implements OnInit{
   loadDevices() {
     this.db_device = new DevicesDatabase();
     this.db_device.transaction('rw', this.db_device.values, async() => {
-      const devs = await this.db_device.values.where('[app_name+dev_id]').between(
+      this.devices = await this.db_device.values.where('[app_name+dev_id]').between(
         [this.selectedApp, Dexie.minKey], [this.selectedApp, Dexie.maxKey]).toArray();
-      this.devices = [];
-      for (let dev of devs) {
-        this.devices.push(dev.dev_id);
+      this.devices_list = [];
+      for (let dev of this.devices) {
+        this.devices_list.push(dev.dev_id);
       }
-      console.log('Devices: ', this.devices);
+      // console.log('Devices: ', this.devices_list);
     }).catch(e => {
       console.log(e.stack || e);
     });
@@ -113,23 +117,24 @@ export class SettingsComponent implements OnInit{
 
   // check if the port was previous initialized
   verifyPort() {
-    const parts_db = new PartsDatabase();
-    parts_db.transaction('rw', parts_db.values, async() => {
-      const dbparts = await parts_db.values
+    this.parts_db.transaction('rw', this.parts_db.values, async() => {
+      const dbparts = await this.parts_db.values
         .where('[app_name+dev_id+port]')
         .equals([this.selectedApp, this.deviceConfig.value.dev_id, this.deviceConfig.value.port]).toArray();
 
       // load the results into the input forms
+
+      console.log('Db_parts: ', dbparts[0]);
+      this.payload_fields = dbparts[0].payload_fields;
       this.divisionValue = dbparts[0].parts.length;
       this.deviceConfig.value.packet_parts = dbparts[0].parts.length;
-
       this.changed('packet', dbparts[0].parts);
 
     }).catch(e => {
-      console.log('Porta não cadastrada!');
+      this.deviceConfig.patchValue({packet_parts: null});
+      // console.log('Porta não cadastrada!');
+      this.payload_fields = false;
       this.packetSelected = false;
-      this.deviceConfig.patchValue({packet_parts: ''});
-      // console.log(e.stack || e);
     });
 
   }
@@ -137,15 +142,17 @@ export class SettingsComponent implements OnInit{
   // verify modifications in the input forms, to enable/disable form fields.
   changed(change, parts=null) {
     if (change === 'device') {
+      let dev =  this.devices.filter(x => x.dev_id === this.deviceConfig.value.dev_id)[0];
+      // console.log('Selected Device: ', dev);
       this.deviceSelected = true; // enables port form field
-
       // reset values of port and parts
-      this.deviceConfig.patchValue({port: '', packet_parts: ''});
+      this.deviceConfig.patchValue({port: '', packet_parts: '', lat: dev.lat, lng: dev.lng});
       // this.deviceConfig.setValue({lat: dbparts[0].lat, lng: dbparts[0].lng});
       this.portSelected = false;
       this.packetSelected = false;
     }
     if (change === 'port') {
+      this.payloadChanged = false;
       // Verify if port is valid
       if (this.deviceConfig.value.port > 0 && this.deviceConfig.value.port < 256) {
         this.portSelected = true; // enables packet_part form field
@@ -199,7 +206,17 @@ export class SettingsComponent implements OnInit{
     if (change === 'lat' || change === 'lng') {
       this.coordinatesChanged = true;
     }
+    if (change === 'payload_fields'){
+      // console.log('Changed Payload Fields', this.payload_fields);
+      if (!this.payload_fields) {
+        this.portSelected = true;
+        // this.changed('port');
+      }
+      this.payloadChanged = true;
+
+    }
   }
+
 
   // hide, if necessary, the forms end_bit and/or scale (Called from HTML)
   checkType(data_type, i) {
@@ -234,29 +251,39 @@ export class SettingsComponent implements OnInit{
 
     // if all forms were filled correctly.
     if (valid_rows) {
-      const parts_db = new PartsDatabase();
-
-      // Insert a object for each packet part
-      for (let i = 0; i < packet_parts.length; i++) {
-        parts_db.transaction('rw', parts_db.values, async() => {
-          await parts_db.values.put({
-            app_name: this.selectedApp,
-            dev_id: this.deviceConfig.value.dev_id,
-            port: this.deviceConfig.value.port,
-            parts: packet_parts});
+      this.parts_db.transaction('rw', this.parts_db.values, async() => {
+        await this.parts_db.values.put({
+          app_name: this.selectedApp,
+          dev_id: this.deviceConfig.value.dev_id,
+          port: this.deviceConfig.value.port,
+          payload_fields: this.payload_fields,
+          parts: packet_parts});
 
 
-        }).catch(e => {
-          console.log('Erro inserindo tabela');
-        });
-      }
+      }).catch(e => {
+        console.log('Erro inserindo tabela');
+      });
       alert('Configuração da porta ' + this.deviceConfig.value.port + ' salva com sucesso');
+    } else {
+      this.parts_db.transaction('rw', this.parts_db.values, async() => {
+        await this.parts_db.values.put({
+          app_name: this.selectedApp,
+          dev_id: this.deviceConfig.value.dev_id,
+          port: this.deviceConfig.value.port,
+          payload_fields: this.payload_fields,
+          parts: ''});
+
+
+      }).catch(e => {
+        console.log('Erro inserindo tabela');
+      });
     }
   }
+
   saveCoordinates() {
 
     this.db_device.transaction('rw', this.db_device.values, async() => {
-      console.log('Salvando Coordenadas');
+      // console.log('Salvando Coordenadas');
       await this.db_device.values.put({
         app_name: this.selectedApp,
         dev_id: this.deviceConfig.value.dev_id,

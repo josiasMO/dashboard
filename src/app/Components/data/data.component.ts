@@ -224,7 +224,6 @@ export class DataComponent implements OnInit {
                   const string_returned = this.binaryToString(
                     output_binary.substring(this.packet_parts[k].start_bit, this.packet_parts[k].end_bit+1));
                 this.DB_VALUES[i][this.packet_parts[k].fieldname] = string_returned;
-
               }
               // else if (this.packet_parts[k].type === 'string'){
               //

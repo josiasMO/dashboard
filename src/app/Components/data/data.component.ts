@@ -205,13 +205,16 @@ export class DataComponent implements OnInit {
             let output_binary = '';
             for (let y = 0; y < string_msg.length; y++) {
               let raw_binary = string_msg[y].toString(2);
-              for (let x = 0; x <= 8 - raw_binary.length; x++)
-                raw_binary = '0' + raw_binary;
+              if (raw_binary.length < 8) {
+                for (let x = 0; x <= 8 - raw_binary.length; x++) {
+                  raw_binary = '0' + raw_binary;
+                }
+              }
               output_binary += raw_binary;
             }
 
             for (let k = 0; k < this.packet_parts.length; k++) {
-              if (this.packet_parts[k].data_type === 'número'){
+              if (this.packet_parts[k].data_type === 'número') {
                 let output_num = '';
                 for (let l = this.packet_parts[k].start_bit; l < this.packet_parts[k].end_bit;  l = l+8){
                   const current_part = output_binary.substring(l, l+8);
@@ -220,23 +223,20 @@ export class DataComponent implements OnInit {
                 this.DB_VALUES[i][this.packet_parts[k].fieldname] = this.packet_parts[k].offset +
                     (parseFloat(output_num) * this.packet_parts[k].scale);
 
-              } else if (this.packet_parts[k].data_type === 'string'){
+              } else if (this.packet_parts[k].data_type === 'string') {
                   const string_returned = this.binaryToString(
                     output_binary.substring(this.packet_parts[k].start_bit, this.packet_parts[k].end_bit+1));
                 this.DB_VALUES[i][this.packet_parts[k].fieldname] = string_returned;
+
+              } else if (this.packet_parts[k].data_type === 'booleano') {
+                const boolean_value = output_binary.substring(
+                  this.packet_parts[k].start_bit, this.packet_parts[k].start_bit+1);
+                this.DB_VALUES[i][this.packet_parts[k].fieldname] = (boolean_value === '1');
               }
-              // else if (this.packet_parts[k].type === 'string'){
-              //
-              // } else {
-              //
-              // }
-              // // console.log('Part: ', k, this.packet_parts[k].start_bit, this.packet_parts[k].end_bit,
-              //   this.packet_parts[k].scale, this.packet_parts[k].offset);
-              // this.DB_VALUES[i][this.packet_parts[k].fieldname] = storedValues[i].payload_raw;
+
             }
 
           }
-          // 'número', 'string', 'booleano']
 
         } else {
           for (let i = 0; i < storedValues.length; i++) {

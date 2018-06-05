@@ -85,10 +85,10 @@ export class DataComponent implements OnInit {
   deviceConfig: FormGroup;
   devices = [];
   packet_parts = [];
-  displayedColumns = [];//'id', 'counter', 'port', 'airtime', 'data_rate', 'frequency', 'timestamp', 'payload_raw'];
+  displayedColumns = [];
   items_packet = [];
 
-  //variables that control readonly of forms
+  // variables that control readonly of forms
   deviceSelected = false;
   portSelected = false;
   loadTable = false;
@@ -107,9 +107,8 @@ export class DataComponent implements OnInit {
   }
 
 
-
   ngOnInit() {
-    //subscribe to service to retrieve app name
+    // subscribe to service to retrieve app name
     this.data.currentApp.subscribe(selectedApp => this.selectedApp = selectedApp);
     this.load_devices();
 
@@ -133,18 +132,17 @@ export class DataComponent implements OnInit {
 
 
   changed(change) {
-    // console.log(change);
     if (change === 'device') {
-      this.deviceSelected = true; //enables port form field
+      this.deviceSelected = true; // enables port form field
 
-      //reset values of port and parts
+      // reset values of port and parts
       this.deviceConfig.patchValue({port: '', packet_parts: ''});
       this.portSelected = false;
     }
     if (change === 'port') {
-      //Verify if port is valid
+      // Verify if port is valid
       if (this.deviceConfig.value.port > 0 && this.deviceConfig.value.port < 256) {
-        this.portSelected = true; //enables packet_part form field
+        this.portSelected = true; // enables packet_part form field
         this.load_port_parts();
       } else {
         this.portSelected = false;
@@ -152,14 +150,13 @@ export class DataComponent implements OnInit {
     }
   }
 
-  load_port_parts(){
+  load_port_parts() {
     this.packet_parts = [];
     const db_parts = new PartsDatabase();
     db_parts.transaction('rw', db_parts.values, async() => {
       const received_parts = await db_parts.values.where('[app_name+dev_id+port]').equals([this.selectedApp,
         this.deviceConfig.value.dev_id, this.deviceConfig.value.port]).toArray();
       this.packet_parts = received_parts[0].parts;
-      // console.log('Parts1: ', JSON.stringify(this.packet_parts));
       this.load_data_device(true);
 
     }).catch(e => {
@@ -170,16 +167,12 @@ export class DataComponent implements OnInit {
 
   load_data_device(parts_registered) {
 
-    const db = new ValuesDatabase('received_values'); //this.selectedApp + '_' + this.deviceConfig.value.dev_id);
+    const db = new ValuesDatabase('received_values');
 
     db.transaction('rw', db.values, async() => {
       let storedValues = await db.values.where('[application+dev_id+port]')
         .equals([this.selectedApp, this.deviceConfig.value.dev_id, this.deviceConfig.value.port])
         .reverse().limit(100).toArray();
-
-
-      //let storedValues = await db.values.orderBy('timestamp').reverse()
-      //   .and(x => x.port === this.deviceConfig.value.port).limit(100).toArray();
 
       if (storedValues.length === 0) {
         alert('Nenhum dado recebido na porta selecionada');
@@ -197,10 +190,7 @@ export class DataComponent implements OnInit {
               frequency: storedValues[i].frequency,
               timestamp: (new Date(storedValues[i].timestamp)).toLocaleString('pt-BR')};
 
-
-
             let string_msg = Buffer.from(storedValues[i].payload_raw, 'base64');
-            // console.log(storedValues[i].payload_raw.toString(), string_msg);
 
             let output_binary = '';
             for (let y = 0; y < string_msg.length; y++) {
@@ -233,9 +223,7 @@ export class DataComponent implements OnInit {
                   this.packet_parts[k].start_bit, this.packet_parts[k].start_bit+1);
                 this.DB_VALUES[i][this.packet_parts[k].fieldname] = (boolean_value === '1');
               }
-
             }
-
           }
 
         } else {
@@ -299,13 +287,9 @@ export class DataComponent implements OnInit {
   }
 
 
-  // displayedColumns = ['id', 'counter', 'payload_raw', 'port', 'airtime', 'data_rate', 'frequency', 'timestamp'];
-
-
   convertToCSV(objArray) {
     const array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-    let str = 'id, counter, payload_raw, port, airtime, coding_rate, data_rate, frequency, ' +
-      'timestamp, gtw_id, gtw_channel, gtw_rssi, gtw_snr' + '\r\n';
+    let str = this.displayedColumns + '\r\n';
 
     for (let i = 0; i < array.length; i++) {
       let line = '';
@@ -321,10 +305,9 @@ export class DataComponent implements OnInit {
     return str;
   }
 
-  downloadCSV(){
+  downloadCSV() {
 
     const jsonObject = JSON.stringify(this.DB_VALUES);
-
     const csv = this.convertToCSV(jsonObject);
     const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;' });
     const csvURL = window.URL.createObjectURL(blob);

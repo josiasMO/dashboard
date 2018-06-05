@@ -133,7 +133,7 @@ export class DataComponent implements OnInit {
 
 
   changed(change) {
-    console.log(change);
+    // console.log(change);
     if (change === 'device') {
       this.deviceSelected = true; //enables port form field
 
@@ -164,7 +164,7 @@ export class DataComponent implements OnInit {
 
     }).catch(e => {
       this.load_data_device(false);
-      console.log(e.stack || e);
+      console.log('Partes não cadastradas');
     });
   }
 
@@ -184,7 +184,7 @@ export class DataComponent implements OnInit {
       if (storedValues.length === 0) {
         alert('Nenhum dado recebido na porta selecionada');
       } else {
-
+        this.DB_VALUES = [];
         if (parts_registered) {
 
           for (let i = 0; i < storedValues.length; i++) {
@@ -211,7 +211,7 @@ export class DataComponent implements OnInit {
             }
 
             for (let k = 0; k < this.packet_parts.length; k++) {
-              if (this.packet_parts[k].data_type === 'número' ){
+              if (this.packet_parts[k].data_type === 'número'){
                 let output_num = '';
                 for (let l = this.packet_parts[k].start_bit; l < this.packet_parts[k].end_bit;  l = l+8){
                   const current_part = output_binary.substring(l, l+8);
@@ -219,6 +219,11 @@ export class DataComponent implements OnInit {
                 }
                 this.DB_VALUES[i][this.packet_parts[k].fieldname] = this.packet_parts[k].offset +
                     (parseFloat(output_num) * this.packet_parts[k].scale);
+
+              } else if (this.packet_parts[k].data_type === 'string'){
+                  const string_returned = this.binaryToString(
+                    output_binary.substring(this.packet_parts[k].start_bit, this.packet_parts[k].end_bit+1));
+                this.DB_VALUES[i][this.packet_parts[k].fieldname] = string_returned;
 
               }
               // else if (this.packet_parts[k].type === 'string'){
@@ -253,7 +258,22 @@ export class DataComponent implements OnInit {
     }).catch(e => {
       console.log(e.stack || e);
     });
-  };
+  }
+  binaryToString(str) {
+    // Removes the spaces from the binary string
+    str = str.replace(/\s+/g, '');
+    // Pretty (correct) print binary (add a space every 8 characters)
+    str = str.match(/.{1,8}/g).join(" ");
+
+    let newBinary = str.split(" ");
+    let binaryCode = [];
+
+    for (let i = 0; i < newBinary.length; i++) {
+      binaryCode.push(String.fromCharCode(parseInt(newBinary[i], 2)));
+    }
+
+    return binaryCode.join("");
+  }
 
 
 

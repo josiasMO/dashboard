@@ -18,12 +18,20 @@
 
 .mat-table {
   overflow: auto;
+
   /*max-height: 500px;*/
 }
 
 .mat-header-cell.mat-sort-header-sorted {
   color: black;
 }
+.mat-row{
+  min-height: 32px;
+}
+.mat-paginator{
+  padding-bottom: 40px;
+}
+
 .downloadButton{
   margin-top: 5px;
   vertical-align: middle;

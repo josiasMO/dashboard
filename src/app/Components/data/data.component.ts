@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {MatTableDataSource, MatSort} from '@angular/material';
+import {MatTableDataSource, MatSort, MatPaginator} from '@angular/material';
 import { Validators, FormControl, FormGroup} from '@angular/forms';
 
 import Dexie from 'dexie';
@@ -96,6 +96,7 @@ export class DataComponent implements OnInit {
 
   DB_VALUES: Values[] = [];
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private data: SharedataService) {
 
@@ -172,7 +173,7 @@ export class DataComponent implements OnInit {
     db.transaction('rw', db.values, async() => {
       let storedValues = await db.values.where('[application+dev_id+port]')
         .equals([this.selectedApp, this.deviceConfig.value.dev_id, this.deviceConfig.value.port])
-        .reverse().limit(100).toArray();
+        .reverse().toArray();
 
       if (storedValues.length === 0) {
         alert('Nenhum dado recebido na porta selecionada');
@@ -284,6 +285,7 @@ export class DataComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.DB_VALUES);
     this.loadTable = true;
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
 

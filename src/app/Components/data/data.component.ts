@@ -3,33 +3,35 @@ import {MatTableDataSource, MatSort, MatPaginator} from '@angular/material';
 import { Validators, FormControl, FormGroup} from '@angular/forms';
 
 import Dexie from 'dexie';
-import { SharedataService } from '../../sharedata.service';
+import { SharedataService } from '../../Services/sharedata.service';
 
 declare const Buffer;
 
 export interface Values {
   id?: number;
+  application?: string;
+  dev_id?: string;
+  port?: number;
   counter?: number;
   payload_raw?: string;
-  port?: number;
+  payload_fields?: boolean;
   airtime?: number;
   coding_rate?: string;
   data_rate?: string;
-  frequency?: number;
+  freq?: number;
   timestamp?: string;
-  gtw_id?: string;
-  gtw_channel?: number;
-  gtw_rssi?: number;
-  gtw_snr?: number;
-}
+  gateways?: any;
+};
+
 class ValuesDatabase extends Dexie {
   values: Dexie.Table<Values, number>;
 
   constructor(db_name) {
     super(db_name);
     this.version(1).stores({
-      values: '++id, [application+dev_id+port], counter, payload_raw, airtime, coding_rate, data_rate, frequency, timestamp,' +
-      'gtw_id, gtw_channel, gtw_rssi, gtw_snr'
+      values: '++id, [application+dev_id+port], counter, ' +
+        'payload_raw, payload_fields, airtime, coding_rate, data_rate,'  +
+        'freq, timestamp, gateways'
     });
   }
 }
@@ -54,10 +56,10 @@ class DevicesDatabase extends Dexie {
 }
 
 export interface Parts {
-  id?: number;
   app_name?: string;
   dev_id?: string;
   port?: number;
+  payload_fields?: boolean;
   parts?: any;
 }
 
@@ -67,7 +69,7 @@ class PartsDatabase extends Dexie {
   constructor() {
     super('parts');
     this.version(1).stores({
-      values: '[app_name+dev_id+port], parts'
+      values: '[app_name+dev_id+port], payload_fields, parts'
     });
   }
 }
@@ -87,6 +89,8 @@ export class DataComponent implements OnInit {
   packet_parts = [];
   displayedColumns = [];
   items_packet = [];
+  payload_fields = false;
+  keys = [];
 
   // variables that control readonly of forms
   deviceSelected = false;
@@ -158,6 +162,7 @@ export class DataComponent implements OnInit {
       const received_parts = await db_parts.values.where('[app_name+dev_id+port]').equals([this.selectedApp,
         this.deviceConfig.value.dev_id, this.deviceConfig.value.port]).toArray();
       this.packet_parts = received_parts[0].parts;
+      this.payload_fields = received_parts[0].payload_fields;
       this.load_data_device(true);
 
     }).catch(e => {
@@ -179,8 +184,9 @@ export class DataComponent implements OnInit {
         alert('Nenhum dado recebido na porta selecionada');
       } else {
         this.DB_VALUES = [];
-        if (parts_registered) {
+        console.log('Parts registered', parts_registered);
 
+        if (parts_registered) {
           for (let i = 0; i < storedValues.length; i++) {
             this.DB_VALUES[i] = {
               id: storedValues[i].id,
@@ -188,41 +194,54 @@ export class DataComponent implements OnInit {
               port: storedValues[i].port,
               airtime: storedValues[i].airtime,
               data_rate: storedValues[i].data_rate,
-              frequency: storedValues[i].frequency,
+              freq: storedValues[i].freq,
               timestamp: (new Date(storedValues[i].timestamp)).toLocaleString('pt-BR')};
 
-            let string_msg = Buffer.from(storedValues[i].payload_raw, 'base64');
+            // console.log('Payload Fields', this.payload_fields);
+            if (this.payload_fields){
+              this.keys = Object.keys(storedValues[i].payload_fields);
+              const values = Object.values(storedValues[i].payload_fields);
 
-            let output_binary = '';
-            for (let y = 0; y < string_msg.length; y++) {
-              let raw_binary = string_msg[y].toString(2);
-              if (raw_binary.length < 8) {
-                for (let x = 0; x <= 8 - raw_binary.length; x++) {
-                  raw_binary = '0' + raw_binary;
-                }
+              for (let j = 0; j < this.keys.length; j++) {
+                this.DB_VALUES[i][this.keys[j]] = values[j];
+
               }
-              output_binary += raw_binary;
-            }
+              // console.log(this.DB_VALUES[i]);
 
-            for (let k = 0; k < this.packet_parts.length; k++) {
-              if (this.packet_parts[k].data_type === 'número') {
-                let output_num = '';
-                for (let l = this.packet_parts[k].start_bit; l < this.packet_parts[k].end_bit;  l = l+8){
-                  const current_part = output_binary.substring(l, l+8);
-                  output_num += (parseInt(current_part, 2) - 48);
+            } else {
+              let string_msg = Buffer.from(storedValues[i].payload_raw, 'base64');
+
+              let output_binary = '';
+              for (let y = 0; y < string_msg.length; y++) {
+                let raw_binary = string_msg[y].toString(2);
+                if (raw_binary.length < 8) {
+                  for (let x = 0; x <= 8 - raw_binary.length; x++) {
+                    raw_binary = '0' + raw_binary;
+                  }
                 }
-                this.DB_VALUES[i][this.packet_parts[k].fieldname] = this.packet_parts[k].offset +
-                    (parseFloat(output_num) * this.packet_parts[k].scale);
+                output_binary += raw_binary;
+              }
 
-              } else if (this.packet_parts[k].data_type === 'string') {
-                  const string_returned = this.binaryToString(
-                    output_binary.substring(this.packet_parts[k].start_bit, this.packet_parts[k].end_bit+1));
-                this.DB_VALUES[i][this.packet_parts[k].fieldname] = string_returned;
+              for (let k = 0; k < this.packet_parts.length; k++) {
+                if (this.packet_parts[k].data_type === 'número') {
+                  let output_num = '';
+                  for (let l = this.packet_parts[k].start_bit; l < this.packet_parts[k].end_bit;  l = l+8){
+                    const current_part = output_binary.substring(l, l+8);
+                    output_num += (parseInt(current_part, 2) - 48);
+                  }
+                  this.DB_VALUES[i][this.packet_parts[k].fieldname] = this.packet_parts[k].offset +
+                      (parseFloat(output_num) * this.packet_parts[k].scale);
 
-              } else if (this.packet_parts[k].data_type === 'booleano') {
-                const boolean_value = output_binary.substring(
-                  this.packet_parts[k].start_bit, this.packet_parts[k].start_bit+1);
-                this.DB_VALUES[i][this.packet_parts[k].fieldname] = (boolean_value === '1');
+                } else if (this.packet_parts[k].data_type === 'string') {
+                    const string_returned = this.binaryToString(
+                      output_binary.substring(this.packet_parts[k].start_bit, this.packet_parts[k].end_bit+1));
+                  this.DB_VALUES[i][this.packet_parts[k].fieldname] = string_returned;
+
+                } else if (this.packet_parts[k].data_type === 'booleano') {
+                  const boolean_value = output_binary.substring(
+                    this.packet_parts[k].start_bit, this.packet_parts[k].start_bit+1);
+                  this.DB_VALUES[i][this.packet_parts[k].fieldname] = (boolean_value === '1');
+                }
               }
             }
           }
@@ -235,7 +254,7 @@ export class DataComponent implements OnInit {
               port: storedValues[i].port,
               airtime: storedValues[i].airtime,
               data_rate: storedValues[i].data_rate,
-              frequency: storedValues[i].frequency,
+              freq: storedValues[i].freq,
               timestamp: storedValues[i].timestamp,
               payload_raw: storedValues[i].payload_raw
             };
@@ -264,22 +283,35 @@ export class DataComponent implements OnInit {
   }
 
 
-
   create_table(parts_registered) {
 
-    if (parts_registered){
+    if (parts_registered) {
       this.items_packet = [];
-      this.displayedColumns = ['id', 'counter', 'port', 'airtime', 'data_rate', 'frequency', 'timestamp'];
-      for (let i = 0; i < this.packet_parts.length; i++){
-        this.displayedColumns.push(this.packet_parts[i].fieldname);
-        this.items_packet.push(this.packet_parts[i].fieldname);
+      this.displayedColumns = ['id', 'counter', 'port', 'airtime', 'data_rate', 'freq', 'timestamp'];
+      if (this.payload_fields) {
+        console.log("Keys: ", this.keys);
+        for (let i = 0; i < this.keys.length; i++) {
+          this.displayedColumns.push(this.keys[i]);
+          this.items_packet.push(this.keys[i]);
+        }
+        console.log("Displayed Columns: ", this.displayedColumns);
+        console.log(this.DB_VALUES);
         this.partsRegistered = true;
+        // this.displayedColumns.push(this.keys);
+        // this.items_packet.push(this.keys);
 
+      } else {
+        for (let i = 0; i < this.packet_parts.length; i++) {
+          this.displayedColumns.push(this.packet_parts[i].fieldname);
+          this.items_packet.push(this.packet_parts[i].fieldname);
+          this.partsRegistered = true;
+
+        }
       }
 
     } else {
       this.partsRegistered = false;
-      this.displayedColumns = ['id', 'counter', 'port', 'airtime', 'data_rate', 'frequency', 'timestamp', 'payload_raw'];
+      this.displayedColumns = ['id', 'counter', 'port', 'airtime', 'data_rate', 'freq', 'timestamp', 'payload_raw'];
 
     }
     this.dataSource = new MatTableDataSource(this.DB_VALUES);

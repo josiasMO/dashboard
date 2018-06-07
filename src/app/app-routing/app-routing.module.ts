@@ -6,6 +6,7 @@ import { LoraComponent } from '../Components/lora/lora.component';
 import { SettingsComponent } from '../Components/settings/settings.component';
 import { ApplicationComponent  } from '../Components/application/application.component';
 import { DataComponent } from '../Components/data/data.component';
+import { GraphsComponent } from '../Components/graphs/graphs.component';
 
 const routes: Routes = [
   {
@@ -27,9 +28,11 @@ const routes: Routes = [
   {
     path: 'data',
     component: DataComponent,
+  },
+  {
+    path: 'graphs',
+    component: GraphsComponent,
   }
-
-
 ];
 
 @NgModule({

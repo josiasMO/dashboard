@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Validators, FormControl, FormGroup} from '@angular/forms';
 
 import Dexie from 'dexie';
-import { SharedataService } from '../../sharedata.service';
+import { SharedataService } from '../../Services/sharedata.service';
 
 //Model of Devices database
 export interface Devices{

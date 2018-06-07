@@ -2,7 +2,7 @@ import { Component, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Validators, FormControl, FormGroup} from '@angular/forms';
 
-import { SharedataService } from './sharedata.service';
+import { SharedataService } from './Services/sharedata.service';
 
 import Dexie from 'dexie';
 

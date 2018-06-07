@@ -17,6 +17,8 @@ import { MatSidenavModule,
   MatTooltipModule,
   MatTableModule,
   MatSortModule,
+  MatPaginatorModule,
+  MatProgressSpinnerModule,
   MatDialogModule,
   MatListModule,
   MatSelectModule} from '@angular/material';
@@ -32,8 +34,10 @@ import { AppRoutingModule } from './app-routing/app-routing.module';
 import { SettingsComponent } from './Components/settings/settings.component';
 import { ApplicationComponent } from './Components/application/application.component';
 import { DataComponent } from './Components/data/data.component';
+import { GraphsComponent } from './Components/graphs/graphs.component';
 
-import { SharedataService } from './sharedata.service';
+import { SharedataService } from './Services/sharedata.service';
+
 
 
 
@@ -46,7 +50,8 @@ import { SharedataService } from './sharedata.service';
     SettingsComponent,
     ApplicationComponent,
     DialogFileComponent,
-    DataComponent
+    DataComponent,
+    GraphsComponent
 
   ],
   imports: [
@@ -67,6 +72,8 @@ import { SharedataService } from './sharedata.service';
     MatTooltipModule,
     MatTableModule,
     MatSortModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
     MatDialogModule,
     MatListModule,
     MatSelectModule,

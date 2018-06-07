@@ -96,7 +96,7 @@ function storeDB(msg) {
   var db_msg = new Dexie('received_values');
   db_msg.version(1).stores({
     values: "++id, [application+dev_id+port], counter, payload_raw, payload_fields, airtime, coding_rate, data_rate, " +
-    "frequency, timestamp, gateways"
+    "freq, timestamp, gateways"
   });
 
 
@@ -110,7 +110,7 @@ function storeDB(msg) {
     airtime: (msg.metadata.airtime == null)?'':msg.metadata.airtime,
     coding_rate: (msg.metadata.coding_rate == null)?'':msg.metadata.coding_rate,
     data_rate: (msg.metadata.data_rate == null)?'':msg.metadata.data_rate,
-    frequency: (msg.metadata.frequency == null)?'':msg.metadata.frequency,
+    freq: (msg.metadata.frequency == null)?'':msg.metadata.frequency,
     timestamp: (msg.metadata.time == null)?'':msg.metadata.time,
     gateways: gateways_packet
   }).then(function() {

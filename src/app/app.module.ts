@@ -38,7 +38,15 @@ import { GraphsComponent } from './Components/graphs/graphs.component';
 
 import { SharedataService } from './Services/sharedata.service';
 
+import { ChartModule, HIGHCHARTS_MODULES } from 'angular-highcharts';
+import stock from 'highcharts/modules/stock.src';
+import more from 'highcharts/highcharts-more.src';
 
+
+export function highchartsModules() {
+  // apply Highcharts Modules to this array
+  return [stock, more];
+}
 
 
 @NgModule({
@@ -80,10 +88,11 @@ import { SharedataService } from './Services/sharedata.service';
     AppRoutingModule,
     NgbModule.forRoot(),
     CdkTableModule,
-    HttpClientModule
+    HttpClientModule,
+    ChartModule
   ],
   entryComponents: [AppComponent, DialogFileComponent],
-  providers: [SharedataService],
+  providers: [SharedataService, {provide: HIGHCHARTS_MODULES, useFactory: highchartsModules}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

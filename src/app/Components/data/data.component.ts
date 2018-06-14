@@ -111,7 +111,6 @@ export class DataComponent implements OnInit {
 
   }
 
-
   ngOnInit() {
     // subscribe to service to retrieve app name
     this.data.currentApp.subscribe(selectedApp => this.selectedApp = selectedApp);

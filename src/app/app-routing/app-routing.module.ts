@@ -13,10 +13,10 @@ const routes: Routes = [
     path: '',
     component: ApplicationComponent,
   },
-  {
-    path: 'lora',
-    component: LoraComponent,
-  },
+  // {
+  //   path: 'lora',
+  //   component: LoraComponent,
+  // },
   {
     path: 'map',
     component: MapComponent,

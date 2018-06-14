@@ -109,11 +109,11 @@
 .sidenavItemGraphs{
   top: 140px;
 }
-.sidenavItemLora{
-  top: 200px;
-}
+/*.sidenavItemLora{*/
+  /*top: 200px;*/
+/*}*/
 .sidenavItemMaps{
-  top: 260px;
+  top: 200px;
 }
 
 .footer {

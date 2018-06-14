@@ -1,5 +1,77 @@
 <div [ngClass]="'graphs'">
-  <p style="padding-top: 200px; padding-left: 400px;">
-    graphs works!
-  </p>
+
+  <div class="container">
+    <div class="row" [formGroup]="deviceConfig">
+      <mat-card style="width: 100%">
+        <mat-card-title>Configuração do Gráfico</mat-card-title>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-md-3">
+              <mat-form-field class="forms">
+                <mat-select placeholder="Dispositivo"
+                            formControlName="dev_id"
+                            (change)="changed('device')"
+                            required>
+                  <mat-option *ngFor="let device of devices" [value]="device">
+                    {{ device }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-md-1" *ngIf="deviceSelected" >
+              <mat-form-field class="port">
+                <input matInput
+                       type="number"
+                       placeholder="Port(Pacote)"
+                       formControlName="port"
+                       [readonly]="!deviceSelected"
+                       (change)="changed('port')" >
+                <mat-error>Campo Inválido</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-md-2  offset-1" *ngIf="portSelected" >
+              <mat-form-field class="forms">
+                <mat-select placeholder="Eixo X"
+                            formControlName="x_label"
+                            (change)="changed('x_label')"
+                            required>
+                  <mat-option *ngFor="let x_label of x_labels" [value]="x_label">
+                    {{ x_label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-md-2" *ngIf="portSelected">
+              <mat-form-field class="forms">
+                <mat-select placeholder="Eixo Y"
+                            formControlName="y_label"
+                            (change)="changed('y_label')"
+                            [disabled]="!x_selected"
+                            required
+                            multiple>
+                  <mat-option *ngFor="let y_label of labels" [value]="y_label">
+                    {{ y_label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-md-1" *ngIf="dataLoaded">
+              <button mat-button [ngClass]="'generateButton'"  (click)="addChart()">Gerar</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row" *ngIf="chart_control">
+        <mat-card style="width: 100%">
+          <mat-card-title>Gráfico Gerado</mat-card-title>
+          <mat-card-content>
+            <div [chart]="stock"></div>
+          </mat-card-content>
+        </mat-card>
+
+    </div>
+  </div>
 </div>

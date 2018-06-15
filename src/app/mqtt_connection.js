@@ -73,25 +73,17 @@ function storeDB(msg) {
   }
   var db_gateways = new Dexie('gateways');
   db_gateways.version(1).stores({
-    values: "gtw_id, altitude, latitude, longitude"
+    values: "gtw_id, alt, lat, lng"
   });
   for(var i = 0; i < gateways_info.length; i++){
-    if((db_gateways.values.where('gtw_id').equals(gateways_info[i].id).toArray()).length == 0) {
-      db_gateways.values.add({
-        gtw_id: gateways_info[i].id,
-        altitude: gateways_info[i].altitude,
-        latitude: gateways_info[i].latitude,
-        longitude: gateways_info[i].longitude
-      }).then(function () {
-        return db_gateways.values.toArray();
-      }).then(function () {
-        console.log("Gateway inserted");
-      }).catch(function (e) {
-        console.log("Error inserting gateway: " + (e.stack || e));
-      });
-    }
-
+        db_gateways.values.add({
+          gtw_id: gateways_info[i].id,
+          alt: gateways_info[i].altitude,
+          lat: gateways_info[i].latitude,
+          lng: gateways_info[i].longitude
+        }).catch(function (e) { });
   }
+
 
   var db_msg = new Dexie('received_values');
   db_msg.version(1).stores({

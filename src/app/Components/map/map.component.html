@@ -1,1 +1,43 @@
-<div #gmap  [ngClass]="'map'"></div>
+<div [ngClass]="'map'">
+  <agm-map
+    [latitude]="lat"
+    [longitude]="lng"
+    [zoom]=15
+    [disableDefaultUI]="false"
+    [zoomControl]="false">
+
+    <agm-marker
+      *ngFor="let m of markers_devices; let i = index"
+      (markerClick)="clickedMarker(m.label, i)"
+      [latitude]="m.lat"
+      [longitude]="m.lng"
+      [label]="m.label"
+      [markerDraggable]="m.draggable">
+
+      <agm-info-window>
+        <strong>{{ m.label }}</strong>
+      </agm-info-window>
+
+    </agm-marker>
+    <agm-marker
+      *ngFor="let m of markers_gateways; let i = index"
+      (markerClick)="clickedMarker(m.label, i)"
+      [latitude]="m.lat"
+      [longitude]="m.lng"
+      [label]="m.label"
+      [markerDraggable]="m.draggable">
+
+      <agm-info-window>
+        <strong>{{ m.label }}</strong>
+      </agm-info-window>
+
+    </agm-marker>
+
+  </agm-map>
+
+</div>
+
+
+
+  <!--<div  #gmap  [ngClass]="'map'"></div>-->
+

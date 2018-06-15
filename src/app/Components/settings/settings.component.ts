@@ -291,7 +291,7 @@ export class SettingsComponent implements OnInit{
         lng: this.deviceConfig.value.lng});
 
       const dbdev = await this.db_device.values.toArray();
-      console.log('Devices Registered: ', dbdev);
+      // console.log('Devices Registered: ', dbdev);
 
     }).catch(e => {
       console.log('Erro inserindo tabela DEVICES');

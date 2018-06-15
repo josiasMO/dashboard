@@ -1,7 +1,20 @@
-.map{
-  top: 50px;
-  bottom: 20px;
-  left: 0;
-  right: 0;
+/*.map{*/
+  /*top: 50px;*/
+  /*bottom: 20px;*/
+  /*left: 0;*/
+  /*right: 0;*/
+  /*position: absolute;*/
+/*}*/
+
+agm-map {
+
+  height: calc(100% - 10px);
+  height: -webkit-calc(100% - 10px); /* google, safari */
+  height: -moz-calc(100% - 10px); /* firefox */
+  padding-top: 50px;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
   position: absolute;
 }

@@ -128,7 +128,7 @@ export class DataComponent implements OnInit {
       for (let dev of devs) {
         this.devices.push(dev.dev_id);
       }
-      console.log('Devices: ', this.devices);
+      // console.log('Devices: ', this.devices);
     }).catch(e => {
       console.log(e.stack || e);
     });
@@ -183,7 +183,7 @@ export class DataComponent implements OnInit {
         alert('Nenhum dado recebido na porta selecionada');
       } else {
         this.DB_VALUES = [];
-        console.log('Parts registered', parts_registered);
+        // console.log('Parts registered', parts_registered);
 
         if (parts_registered) {
           for (let i = 0; i < storedValues.length; i++) {
@@ -288,13 +288,13 @@ export class DataComponent implements OnInit {
       this.items_packet = [];
       this.displayedColumns = ['id', 'counter', 'port', 'airtime', 'data_rate', 'freq', 'timestamp'];
       if (this.payload_fields) {
-        console.log("Keys: ", this.keys);
+        // console.log("Keys: ", this.keys);
         for (let i = 0; i < this.keys.length; i++) {
           this.displayedColumns.push(this.keys[i]);
           this.items_packet.push(this.keys[i]);
         }
-        console.log("Displayed Columns: ", this.displayedColumns);
-        console.log(this.DB_VALUES);
+        // console.log("Displayed Columns: ", this.displayedColumns);
+        // console.log(this.DB_VALUES);
         this.partsRegistered = true;
         // this.displayedColumns.push(this.keys);
         // this.items_packet.push(this.keys);

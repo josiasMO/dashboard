@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { AgmCoreModule } from '@agm/core';
 
 import { MatSidenavModule,
   MatCheckboxModule,
@@ -89,7 +90,10 @@ export function highchartsModules() {
     NgbModule.forRoot(),
     CdkTableModule,
     HttpClientModule,
-    ChartModule
+    ChartModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyDloTBB_rTy3saTXX3f_pZqxNVfaEl6_mE'
+    })
   ],
   entryComponents: [AppComponent, DialogFileComponent],
   providers: [SharedataService, {provide: HIGHCHARTS_MODULES, useFactory: highchartsModules}],

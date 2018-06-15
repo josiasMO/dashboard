@@ -92,7 +92,7 @@ export function highchartsModules() {
     HttpClientModule,
     ChartModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyDloTBB_rTy3saTXX3f_pZqxNVfaEl6_mE'
+      apiKey: 'YOUR KEY'
     })
   ],
   entryComponents: [AppComponent, DialogFileComponent],
